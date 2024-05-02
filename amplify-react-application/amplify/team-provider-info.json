@@ -16,5 +16,23 @@
         "3divvycb8fb85a": {}
       }
     }
+  },
+  "divvyapp": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-3divvy-divvyapp-e614e-authRole",
+      "UnauthRoleArn": "arn:aws:iam::654654442640:role/amplify-3divvy-divvyapp-e614e-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::654654442640:role/amplify-3divvy-divvyapp-e614e-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-3divvy-divvyapp-e614e-deployment",
+      "UnauthRoleName": "amplify-3divvy-divvyapp-e614e-unauthRole",
+      "StackName": "amplify-3divvy-divvyapp-e614e",
+      "StackId": "arn:aws:cloudformation:us-east-2:654654442640:stack/amplify-3divvy-divvyapp-e614e/89af0cd0-0819-11ef-bc32-0ad6880fe83b",
+      "AmplifyAppId": "d27o2n9j9ixhvm"
+    },
+    "categories": {
+      "auth": {
+        "3divvycb8fb85a": {}
+      }
+    }
   }
 }
