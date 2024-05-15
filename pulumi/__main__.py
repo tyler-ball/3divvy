@@ -1,274 +1,3 @@
-#"""An AWS Python Pulumi program"""
-#
-#import pulumi
-#import pulumi_aws_native as aws_native
-#
-#user_pool = aws_native.cognito.UserPool("default",
-#    account_recovery_setting=aws_native.cognito.UserPoolAccountRecoverySettingArgs(
-#        recovery_mechanisms=[aws_native.cognito.UserPoolRecoveryOptionArgs(
-#            name="verified_email",
-#            priority=1,
-#        )],
-#    ),
-#    admin_create_user_config=aws_native.cognito.UserPoolAdminCreateUserConfigArgs(
-#        allow_admin_create_user_only=False,
-#        unused_account_validity_days=7,
-#    ),
-#    alias_attributes=[],
-#    auto_verified_attributes=["email"],
-#    deletion_protection="ACTIVE",
-#    email_configuration=aws_native.cognito.UserPoolEmailConfigurationArgs(
-#        email_sending_account="COGNITO_DEFAULT",
-#    ),
-#    lambda_config=aws_native.cognito.UserPoolLambdaConfigArgs(),
-#    mfa_configuration="OFF",
-#    policies=aws_native.cognito.UserPoolPoliciesArgs(
-#        password_policy=aws_native.cognito.UserPoolPasswordPolicyArgs(
-#            minimum_length=8,
-#            require_lowercase=True,
-#            require_numbers=True,
-#            require_symbols=False,
-#            require_uppercase=True,
-#            temporary_password_validity_days=7,
-#        ),
-#    ),
-#    schema=[
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="profile",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="address",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="birthdate",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="10",
-#                min_length="10",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="gender",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="preferred_username",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="Number",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="updated_at",
-#            number_attribute_constraints=aws_native.cognito.UserPoolNumberAttributeConstraintsArgs(
-#                min_value="0",
-#            ),
-#            required=False,
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="website",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="picture",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="identities",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=False,
-#            name="sub",
-#            required=True,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="1",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="phone_number",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="Boolean",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="phone_number_verified",
-#            required=False,
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="zoneinfo",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="locale",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="email",
-#            required=True,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="Boolean",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="email_verified",
-#            required=False,
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="given_name",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="family_name",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="middle_name",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="name",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#        aws_native.cognito.UserPoolSchemaAttributeArgs(
-#            attribute_data_type="String",
-#            developer_only_attribute=False,
-#            mutable=True,
-#            name="nickname",
-#            required=False,
-#            string_attribute_constraints=aws_native.cognito.UserPoolStringAttributeConstraintsArgs(
-#                max_length="2048",
-#                min_length="0",
-#            ),
-#        ),
-#    ],
-#    user_attribute_update_settings=aws_native.cognito.UserPoolUserAttributeUpdateSettingsArgs(
-#        attributes_require_verification_before_update=["email"],
-#    ),
-#    user_pool_name="default",
-#    user_pool_tags={},
-#    username_attributes=["email"],
-#    username_configuration=aws_native.cognito.UserPoolUsernameConfigurationArgs(
-#        case_sensitive=False,
-#    ),
-#    verification_message_template=aws_native.cognito.UserPoolVerificationMessageTemplateArgs(
-#        default_email_option="CONFIRM_WITH_CODE",
-#    ),
-#    opts=pulumi.ResourceOptions(protect=True))
-#
-## TODO
-## pulumi import aws-native:cognito:UserPoolClient streamlit-app 'us-west-2_hL7O6cfkj/600cmd89ln6444e1lt0cerna86'
 import pulumi
 import json
 import pulumi_aws as aws
@@ -414,14 +143,57 @@ filter_jobs_handler = aws.lambda_.Function('filterJobs',
 	)
 )
 
-# Create an API Gateway Rest API.
-api = apigateway.RestAPI("api",
-	routes=[
-		apigateway.RouteArgs(path="/get_jobs",
-							method=apigateway.Method.GET,
-							event_handler=filter_jobs_handler)
-	]
+api_gateway = aws.apigatewayv2.Api("apiGateway", protocol_type="HTTP")
+
+# Create a Lambda permission to allow the API Gateway to invoke the function
+lambda_permission = aws.lambda_.Permission("lambdaPermission",
+    action="lambda:InvokeFunction",
+    function=filter_jobs_handler.name,
+    principal="apigateway.amazonaws.com",
+    source_arn=api_gateway.execution_arn.apply(lambda arn: arn + "/*/*")
 )
 
-pulumi.export("api_url", api.url)
+integration = aws.apigatewayv2.Integration("myIntegration",
+    api_id=api_gateway.id,
+    integration_type="AWS_PROXY",  # Choose from HTTP, HTTP_PROXY, AWS, AWS_PROXY
+    integration_method="GET",     # Use appropriate HTTP method
+    integration_uri=filter_jobs_handler.arn, # Replace with your Lambda ARN
+)
+
+# Create a route for the API Gateway
+api_gateway_route = aws.apigatewayv2.Route("apiGatewayRoute",
+    api_id=api_gateway.id,
+    route_key="GET /jobs",
+    target=pulumi.Output.concat("integrations/", integration.id)
+)
+
+
+
+# Deploy the API Gateway
+api_gateway_deployment = aws.apigatewayv2.Deployment("apiGatewayDeployment",
+    api_id=api_gateway.id,
+    opts=pulumi.ResourceOptions(depends_on=[api_gateway_route]),
+	triggers={"redeployment": pulumi.Output.all(api_gateway_route.route_key).apply(lambda x: str(x))}
+)
+
+# Create a stage to expose the REST API
+api_gateway_stage = aws.apigatewayv2.Stage("apiGatewayStage",
+    api_id=api_gateway.id,
+    deployment_id=api_gateway_deployment.id,
+    name="prod"
+)
+
+# Export the API Gateway endpoint URL
+pulumi.export('api_gateway_url', api_gateway_stage.invoke_url)
+
+# Create an API Gateway Rest API.
+# api = apigateway.RestAPI("api",
+# 	routes=[
+# 		apigateway.RouteArgs(path="/get_jobs",
+# 							method=apigateway.Method.GET,
+# 							event_handler=filter_jobs_handler)
+# 	]
+# )
+# 
+# pulumi.export("api_url", api.url)
 
