@@ -1,6 +1,5 @@
 import { Authenticator } from '@aws-amplify/ui-react';
 import { Link } from "react-router-dom";
-import Home from '../pages/Home';
 
 export default function NavBar(){
   return(

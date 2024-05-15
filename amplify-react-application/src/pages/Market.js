@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import { styled } from '@mui/material/styles';
+import { Grid, Label,
+    FormControlLabel, TextField, Box, Button, Checkbox, styled, 
+    FormControl} from '@mui/material';
 import NavBar from '../components/NavBar'
 
 import '../styles/marketStyle.css'
+import Popup from '../components/Popup';
 
 const ColorButton = styled(Button)(({ }) => ({
     color: 'black',
@@ -18,7 +16,7 @@ const ColorButton = styled(Button)(({ }) => ({
     },
 }));
 
-const FilterBar = () => {
+const FilterBar = ({setShowPopUp}) => {
   
     return (
         <>
@@ -68,21 +66,32 @@ const FilterBar = () => {
             </div>
             <ColorButton variant="outlined">Apply Filter</ColorButton>
             <p>----- OR ------</p>
-            <ColorButton variant="outlined">Create New Job</ColorButton>
+            <ColorButton variant="outlined" onClick={() => {setShowPopUp(true)}}>Create New Job</ColorButton>
         </>
     )
 };
 
 export default function Market() {
+    const [columnsToUpsert, setColumnsToUpsert] = useState([]);
+    const [ showPopUp, setShowPopUp ] = useState(false);
+
     return (
         <>
             <NavBar />
             <div className='filter-container'>
-            <div className='filter-div'>
-                <FilterBar />
+                <div className='filter-div'>
+                    <FilterBar 
+                        setShowPopUp={setShowPopUp}
+                    />
+                </div>
+                <div className='jobs-list'> Job List</div>
             </div>
-            <div className='jobs-list'> Job List</div>
-            </div>
+            {showPopUp && 
+                <Popup 
+                    showPopUp = {showPopUp}
+                    setShowPopUp={setShowPopUp}
+                />
+            }
         </>
     )
 }

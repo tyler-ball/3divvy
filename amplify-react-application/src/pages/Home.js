@@ -12,9 +12,12 @@ function generate(element) {
         key: value,
       }),
     );
-  }
+}
 
-export default function Home () {
+export default function Home({signInDetails, accessToken}) {
+    if (accessToken){
+        console.log('Hi this is accessToken: ', accessToken);
+    }
     return (
         <>
             <NavBar />
