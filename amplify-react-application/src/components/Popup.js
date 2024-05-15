@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Grid, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions} from "@mui/material";
 import { makeStyles } from '@mui/styles';
 
@@ -19,10 +19,18 @@ const useStyles = makeStyles({
   }
 })
 
+function createJob (title, description, amount) {
+  console.log(title, description, amount);
+}
 
 export default function Popup(props) {
   const classes = useStyles();
   const {showPopUp, setShowPopUp} = props;
+  const [ title, setTitle ] = useState('');
+  const [ description, setDescription ] = useState('');
+  const [ amount, setAmount ] = useState('');
+  
+
   return (
     <Dialog open={showPopUp} maxWidth="xs" classes={{paper: classes.dialogWrapper}}>
       <DialogTitle> 
@@ -37,14 +45,22 @@ export default function Popup(props) {
         </Button>
       </DialogTitle>
       <DialogContent dividers>
-        {/* <Box> */}
           <Grid 
             container
             justifyContent="center"
             alignItems="center"
           >
             <Grid item className = {classes.gridText}>
-              <TextField variant="outlined" label="Title" size="small" fullWidth />
+              <TextField 
+                variant="outlined"
+                label="Title"
+                size="small"
+                fullWidth 
+                value={title}
+                onChange={(event) => {
+                  setTitle(event.target.value);
+                }}
+              />
             </Grid>
             <Grid item className = {classes.gridText} padding='15px 0 15px 0'>
               <TextField
@@ -53,6 +69,10 @@ export default function Popup(props) {
                 multiline
                 rows={4}
                 fullWidth
+                value={description}
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
               />
             </Grid>
             <Grid item className = {classes.gridText}>
@@ -62,13 +82,16 @@ export default function Popup(props) {
                 type="number"
                 size="small"
                 fullWidth
+                value={amount}
+                onChange={(event) => {
+                  setAmount(event.target.value);
+                }}
               />
             </Grid>
           </Grid>
-        {/* </Box> */}
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => console.log("hello")} color="primary" variant="contained">Create Job</Button>
+        <Button onClick={() => createJob(title, description, amount)} color="primary" variant="contained">Create Job</Button>
       </DialogActions>
     </Dialog>
   );
