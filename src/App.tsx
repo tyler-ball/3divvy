@@ -35,31 +35,31 @@ function App() {
 
   // TODO figure out enums
 
-  function createJob(submitter: string, title: string, description: string, amountOffered: string, requiredMaterials: "PLA" | "NYLON") {
-    client.models.Job.create({
-      submitter: submitter,
-      title: title,
-      description: description,
-      amountOffered: parseFloat(amountOffered),
-      requiredMaterials: requiredMaterials,
-    }, { authMode: "userPool" });
-  }
+  // function createJob(submitter: string, title: string, description: string, amountOffered: string, requiredMaterials: "PLA" | "NYLON") {
+  //   client.models.Job.create({
+  //     submitter: submitter,
+  //     title: title,
+  //     description: description,
+  //     amountOffered: parseFloat(amountOffered),
+  //     requiredMaterials: requiredMaterials,
+  //   }, { authMode: "userPool" });
+  // }
 
-  function deleteJob(id: string) {
-    client.models.Job.delete({ id })
-  }
+  // function deleteJob(id: string) {
+  //   client.models.Job.delete({ id })
+  // }
 
   return (
     <Authenticator>
       {({ signOut, user }) => (
         <main>
           <h1>{user?.signInDetails?.loginId}'s jobs</h1>
-          {/* <button onClick={createTodo}>+ new</button>
+          {/* <button onClick={createTodo}>+ new</button> */}
           <ul>
             {jobs.map((job) => (
-              <li key={job.id} onClick={() => deleteTodo(todo.id)}>{todo.content}</li>
+              <li key={job.id}>{job.title}</li>
             ))}
-          </ul> */}
+          </ul>
           <div>
             🥳 App successfully hosted. Try creating a new todo.
             <br />
