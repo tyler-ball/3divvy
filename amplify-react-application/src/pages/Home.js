@@ -1,54 +1,69 @@
 import React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
+import { 
+    FormControlLabel,
+    TextField,
+    Box,
+    Button,
+    Checkbox,
+    styled, 
+    List,
+    ListItem,
+    ListItemText,
+    IconButton,
+    ListSubheader
+} from '@mui/material';
+import Divider from '@mui/material/Divider';
 import '../styles/homeStyle.css'
 import NavBar from '../components/NavBar';
 
 
-function generate(element) {
-    return [0, 1, 2].map((value) =>
-      React.cloneElement(element, {
-        key: value,
-      }),
-    );
-}
-
 export default function Home({signInDetails, accessToken}) {
+    const requestItems = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6"];
+    const jobItems = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7"];
+
     if (accessToken){
         console.log('Hi this is accessToken: ', accessToken);
     }
     return (
         <>
             <NavBar />
-            <div className="request-container">
-                <h2>My Requests</h2>
-                <div className='list-container'>
-                    <List >
-                        {generate(
-                            <ListItem>
-                            <ListItemText
-                                primary="Single-line item"
-                            />
-                            </ListItem>
-                        )}
-                    </List>
+            <div className='home-container'>
+                <div className="request-container">
+                    <h2>My Requests</h2>
+                    <div className='list-container'>
+                        <List >
+                            {requestItems.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <ListItem>
+                                        <ListItemText
+                                            primary={item}
+                                        />
+                                    </ListItem>
+                                    {index < requestItems.length - 1 && <Divider variant="middle" component="li" />}
+                                </React.Fragment>
+                            ))}
+                        </List>
+                    </div>
+                </div>
+                <div className="jobs-container">
+                    <h2>My Jobs</h2>
+                    <div className='list-container'>
+                        <List>
+                            {jobItems.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    <ListItem>
+                                        <ListItemText
+                                            primary={item}
+                                        />
+                                    </ListItem>
+                                    {index < jobItems.length - 1 && <Divider variant="middle" component="li" />}
+                                </React.Fragment>
+                            ))}
+                        </List>
+                    </div>
                 </div>
             </div>
-            <div className="jobs-container">
-                <h2>My Jobs</h2>
-                <div className='list-container'>
-                    <List>
-                        {generate(
-                            <ListItem>
-                            <ListItemText
-                                primary="Single-line item"
-                            />
-                            </ListItem>
-                        )}
-                    </List>
-                </div>
-            </div>
+            
         </>
     )
 }
