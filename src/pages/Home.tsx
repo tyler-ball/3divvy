@@ -3,18 +3,16 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import '../styles/homeStyle.css'
-import NavBar from '../components/NavBar.jsx';
 
-
-function generate(element) {
+function generate(element: any) {
     return [0, 1, 2].map((value) =>
-      React.cloneElement(element, {
-        key: value,
-      }),
+        React.cloneElement(element, {
+            key: value,
+        }),
     );
-  }
+}
 
-export default function Home () {
+export default function Home() {
     return (
         <>
             <div className="request-container">
@@ -23,9 +21,9 @@ export default function Home () {
                     <List >
                         {generate(
                             <ListItem>
-                            <ListItemText
-                                primary="Single-line item"
-                            />
+                                <ListItemText
+                                    primary="Single-line item"
+                                />
                             </ListItem>
                         )}
                     </List>
@@ -37,9 +35,9 @@ export default function Home () {
                     <List>
                         {generate(
                             <ListItem>
-                            <ListItemText
-                                primary="Single-line item"
-                            />
+                                <ListItemText
+                                    primary="Single-line item"
+                                />
                             </ListItem>
                         )}
                     </List>
