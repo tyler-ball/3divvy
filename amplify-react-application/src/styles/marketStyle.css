@@ -32,12 +32,17 @@
   height: 650px;
 }
 
-.material, .colour, .min-size, .max-size, .filt-btn{
+.material,
+.color,
+.min-size,
+.max-size,
+.filt-btn {
   margin: 5px;
   margin-bottom: 10px;
 }
 
-.min-size, .max-size{
+.min-size,
+.max-size {
   margin-top: 10px;
 }
 
@@ -47,10 +52,10 @@
   height: 50px;
   overflow-y: auto;
   border-radius: 5px;
-  border:1px solid rgb(192, 192, 192);
+  border: 1px solid rgb(192, 192, 192);
   padding: 5px;
 }
-  
+
 .filter-bar label {
   flex-basis: 100px;
   text-align: left;
@@ -59,4 +64,3 @@
 .filter-bar select {
   flex-basis: 200px;
 }
-

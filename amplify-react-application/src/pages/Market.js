@@ -19,52 +19,52 @@ const ColorButton = styled(Button)(({ }) => ({
 }));
 
 const FilterBar = () => {
-  
+
     return (
         <>
             <div className='material'>
-            <label>Material</label>
-            <Box className='filters'>
-                <FormControlLabel control={<Checkbox />} label="Plastic" />
-                <FormControlLabel control={<Checkbox />} label="Resin" />
-                <FormControlLabel control={<Checkbox />} label="Carbon Fiber" />
-            </Box>
+                <label>Material</label>
+                <Box className='filters'>
+                    <FormControlLabel control={<Checkbox />} label="Plastic" />
+                    <FormControlLabel control={<Checkbox />} label="Resin" />
+                    <FormControlLabel control={<Checkbox />} label="Carbon Fiber" />
+                </Box>
             </div>
-            <div className='colour'>
-            <label>Colour</label>
-            <Box className='filters'>
-                <FormControlLabel control={<Checkbox />} label="Red" />
-                <FormControlLabel control={<Checkbox />} label="White" />
-                <FormControlLabel control={<Checkbox />} label="Black" />
-                <FormControlLabel control={<Checkbox />} label="Blue" />
-                <FormControlLabel control={<Checkbox />} label="Transparent" />
-            </Box>
+            <div className='color'>
+                <label>Color</label>
+                <Box className='filters'>
+                    <FormControlLabel control={<Checkbox />} label="Red" />
+                    <FormControlLabel control={<Checkbox />} label="White" />
+                    <FormControlLabel control={<Checkbox />} label="Black" />
+                    <FormControlLabel control={<Checkbox />} label="Blue" />
+                    <FormControlLabel control={<Checkbox />} label="Transparent" />
+                </Box>
             </div>
             <div className='min-size'>
-            <Box>
-                <TextField
-                    id="outlined-number"
-                    label="Min Price"
-                    type="number"
-                    size="small"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-            </Box>
+                <Box>
+                    <TextField
+                        id="outlined-number"
+                        label="Min Price"
+                        type="number"
+                        size="small"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </Box>
             </div>
             <div className='max-size'>
-            <Box>
-                <TextField
-                    id="outlined-number"
-                    label="Max Price"
-                    type="number"
-                    size="small"
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-            </Box>
+                <Box>
+                    <TextField
+                        id="outlined-number"
+                        label="Max Price"
+                        type="number"
+                        size="small"
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </Box>
             </div>
             <ColorButton variant="outlined">Apply Filter</ColorButton>
             <p>----- OR ------</p>
@@ -78,10 +78,10 @@ export default function Market() {
         <>
             <NavBar />
             <div className='filter-container'>
-            <div className='filter-div'>
-                <FilterBar />
-            </div>
-            <div className='jobs-list'> Job List</div>
+                <div className='filter-div'>
+                    <FilterBar />
+                </div>
+                <div className='jobs-list'> Job List</div>
             </div>
         </>
     )
