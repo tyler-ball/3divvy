@@ -1,93 +1,89 @@
-import React, { useState } from 'react';
-import { generateClient } from 'aws-amplify/data';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
-import NavBar from '../components/NavBar'
-import type { Schema } from '../../../amplify/data/resource';
-import { useAuthenticator } from '@aws-amplify/ui-react';
+import { AuthUser } from 'aws-amplify/auth';
+import { generateClient } from 'aws-amplify/data';
+import { useState } from 'react';
+import type { Schema } from '../../amplify/data/resource';
 
-import '../styles/marketStyle.css'
+import '../styles/marketStyle.css';
 
-const ColorButton = styled(Button)(({ }) => ({
+const ColorButton = styled(Button)({
     color: 'black',
     borderColor: 'rgb(192, 192, 192)',
     margin: '5px',
     '&:hover': {
         borderColor: 'rgb(192, 192, 192)',
-    },
-}));
+    }
+});
 
-function CreateJob() {
-	const { user, signOut } = useAuthenticator((context) => [context.user]);
-	const [formData, setFormData] = useState({
-		"title": "",
-		"description": "",
-		"amt_offered": 0,
-		"req_mat": [],
-	});
-	
-	const client = generateClient<Schema>();
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData({
-		  ...formData,
-		  [name]: value
-		});
-	};
+function CreateJob({ user }: { user: AuthUser }) {
+    const [formData, setFormData] = useState({
+        "title": "",
+        "description": "",
+        "amt_offered": 0,
+        "req_mat": [],
+    });
 
-	const createJob = async () => {
-		const { err, data: new_job } = await client.models.Job.create({
-			submitter: user.userId,
-			title: formData.title,
-			description: formData.description,
-			amountOffered: formData.amt_offered,
-		});
-	}
+    const client = generateClient<Schema>();
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
 
-	return (
-		<table>
-		<tbody>
-			<tr>
-			<td><label>Title</label></td>
-			<td><input 
-				type="text" 
-				name="title"
-				value={formData['title']}
-				onChange={handleChange}
-			/></td>
-			</tr>
+    const createJob = async () => {
+        await client.models.Job.create({
+            submitter: user.userId,
+            title: formData.title,
+            description: formData.description,
+            amountOffered: formData.amt_offered,
+        });
+    }
 
-			<tr>
-			<td><label>Description</label></td>
-			<td><input 
-				type="text" 
-				name="description"
-				value={formData['description']}
-				onChange={handleChange}
-			/></td>
-			</tr>
-			<tr>
-			<td><label>Amount Offered</label></td>
-			<td><input 
-				type="number" 
-				name="amt_offered"
-				step="0.01"
-				value={formData['amt_offered']}
-				onChange={handleChange}
-			/></td>
-			</tr>
-			<tr>
-				<button onClick={createJob}>Create</button>
-			</tr>
-		</tbody>
-		</table>);
+    return (
+        <table>
+            <tbody>
+                <tr>
+                    <td><label>Title</label></td>
+                    <td><input
+                        type="text"
+                        name="title"
+                        value={formData['title']}
+                        onChange={handleChange}
+                    /></td>
+                </tr>
+
+                <tr>
+                    <td><label>Description</label></td>
+                    <td><input
+                        type="text"
+                        name="description"
+                        value={formData['description']}
+                        onChange={handleChange}
+                    /></td>
+                </tr>
+                <tr>
+                    <td><label>Amount Offered</label></td>
+                    <td><input
+                        type="number"
+                        name="amt_offered"
+                        step="0.01"
+                        value={formData['amt_offered']}
+                        onChange={handleChange}
+                    /></td>
+                </tr>
+                <tr>
+                    <button onClick={createJob}>Create</button>
+                </tr>
+            </tbody>
+        </table>);
 }
-
-
 
 const FilterBar = () => {
 
@@ -101,8 +97,8 @@ const FilterBar = () => {
                     <FormControlLabel control={<Checkbox />} label="Carbon Fiber" />
                 </Box>
             </div>
-            <div className='colour'>
-                <label>Colour</label>
+            <div className='color'>
+                <label>Color</label>
                 <Box className='filters'>
                     <FormControlLabel control={<Checkbox />} label="Red" />
                     <FormControlLabel control={<Checkbox />} label="White" />
@@ -146,7 +142,7 @@ const FilterBar = () => {
 
 
 
-export default function Market() {
+export default function Market({ user }: { user: AuthUser }) {
     return (
         <>
             <div className='filter-container'>
@@ -154,9 +150,8 @@ export default function Market() {
                     <FilterBar />
                 </div>
                 <div className='jobs-list'> Job List</div>
-				<p>Job List</p>
-				<CreateJob/>
-			</div>
+                <p>Job List</p>
+                <CreateJob user={user} />
             </div>
         </>
     )
