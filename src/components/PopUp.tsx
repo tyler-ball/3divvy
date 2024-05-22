@@ -1,0 +1,171 @@
+import React, { Dispatch, useState, useEffect } from "react";
+import {
+    Grid,
+    TextField,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+} from "@mui/material";
+import { makeStyles } from '@mui/styles';
+import { AuthUser } from 'aws-amplify/auth';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../amplify/data/resource';
+
+const useStyles = makeStyles({
+    dialogWrapper: {
+        padding: '10px',
+        display: 'flex',
+        alignItems: 'center',
+    },
+
+    gridText: {
+        width: '100%',
+    },
+
+    closeBtn: {
+        position: 'absolute',
+        right: '10px',
+    },
+
+    alertText: {
+        width: '90px',
+        zIndex: 1,
+    },
+})
+
+interface FormData {
+    title: string;
+    description: string;
+    amt_offered: number;
+}
+
+type CreateJobResult = {
+    success: boolean;
+    message: string;
+};
+
+async function CreateJob({ user, formData }: { user: AuthUser, formData: FormData }): Promise<CreateJobResult> {
+    try {
+        const client = generateClient<Schema>();
+        // await client.models.Job.create({
+        //     submitter: user.userId,
+        //     title: formData.title,
+        //     description: formData.description,
+        //     amountOffered: formData.amt_offered,
+        // });
+        return { success: true, message: 'Job created successfully.' };
+    } catch (error) {
+        return { success: false, message: 'Failed to create job.' };
+    }
+}
+
+type PopUpProps = {
+    showPopUp: boolean,
+    setShowPopUp: Dispatch<React.SetStateAction<boolean>>,
+    setShowAlert:Dispatch<React.SetStateAction<boolean>>,
+    setShowAlertMessage: Dispatch<React.SetStateAction<string>>,
+    setAlertType: Dispatch<React.SetStateAction<string>>,
+    user: AuthUser,
+}
+
+export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAlertMessage, setAlertType, user }: PopUpProps) {
+    const classes = useStyles();
+    
+    const [formData, setFormData] = useState({
+        "title": "",
+        "description": "",
+        "amt_offered": 0,
+        "req_mat": [],
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+    };
+
+    const handleCreateJob = async() => {
+        setShowPopUp(false);
+        const result = await CreateJob({ user, formData });
+        setAlertType("error")
+        if (result.success) {
+            setShowAlert(true);
+            setAlertType("success")
+            setShowAlertMessage(result.message);
+        }
+    }
+
+    return (
+        <>
+            <Dialog open={showPopUp} maxWidth="xs" classes={{ paper: classes.dialogWrapper }}>
+                <DialogTitle>
+                    Create Job
+                    <Button
+                        onClick={() => setShowPopUp(false)}
+                        className={classes.closeBtn}
+                        variant="text"
+                        color="error"
+                    >
+                        X
+                    </Button>
+                </DialogTitle>
+                <DialogContent dividers>
+                    <Grid
+                        container
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Grid item className={classes.gridText}>
+                            <TextField
+                                variant="outlined"
+                                label="Title"
+                                size="small"
+                                name="title"
+                                fullWidth
+                                value={formData.title}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item className={classes.gridText} padding='15px 0 15px 0'>
+                            <TextField
+                                variant="outlined"
+                                label="Description"
+                                multiline
+                                name="description"
+                                rows={4}
+                                fullWidth
+                                value={formData.description}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item className={classes.gridText}>
+                            <TextField
+                                variant="outlined"
+                                label="Amount"
+                                type="number"
+                                size="small"
+                                name="amt_offered"
+                                fullWidth
+                                value={formData.amt_offered}
+                                onChange={handleChange}
+                            />
+                        </Grid>
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={handleCreateJob}
+                        color="primary"
+                        variant="contained"
+                    >
+                        Create Job
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
+}

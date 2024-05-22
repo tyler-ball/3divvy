@@ -1,13 +1,19 @@
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
+import React, { useState, Dispatch, useEffect } from 'react';
 import { AuthUser } from 'aws-amplify/auth';
-import { generateClient } from 'aws-amplify/data';
-import { useState } from 'react';
-import type { Schema } from '../../amplify/data/resource';
+import { 
+    FormControlLabel,
+    TextField,
+    Box,
+    Button,
+    Checkbox,
+    styled, 
+    List,
+    ListSubheader,
+    Dialog,
+    Stack,
+} from '@mui/material';
+import Popup from '../components/PopUp';
+import Alert from '@mui/material/Alert';
 
 import '../styles/marketStyle.css';
 
@@ -20,73 +26,11 @@ const ColorButton = styled(Button)({
     }
 });
 
-function CreateJob({ user }: { user: AuthUser }) {
-    const [formData, setFormData] = useState({
-        "title": "",
-        "description": "",
-        "amt_offered": 0,
-        "req_mat": [],
-    });
-
-    const client = generateClient<Schema>();
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
-
-    const createJob = async () => {
-        await client.models.Job.create({
-            submitter: user.userId,
-            title: formData.title,
-            description: formData.description,
-            amountOffered: formData.amt_offered,
-        });
-    }
-
-    return (
-        <table>
-            <tbody>
-                <tr>
-                    <td><label>Title</label></td>
-                    <td><input
-                        type="text"
-                        name="title"
-                        value={formData['title']}
-                        onChange={handleChange}
-                    /></td>
-                </tr>
-
-                <tr>
-                    <td><label>Description</label></td>
-                    <td><input
-                        type="text"
-                        name="description"
-                        value={formData['description']}
-                        onChange={handleChange}
-                    /></td>
-                </tr>
-                <tr>
-                    <td><label>Amount Offered</label></td>
-                    <td><input
-                        type="number"
-                        name="amt_offered"
-                        step="0.01"
-                        value={formData['amt_offered']}
-                        onChange={handleChange}
-                    /></td>
-                </tr>
-                <tr>
-                    <button onClick={createJob}>Create</button>
-                </tr>
-            </tbody>
-        </table>);
+type FilterBarProps = {
+    setShowPopUp: Dispatch<React.SetStateAction<boolean>>,
 }
 
-const FilterBar = () => {
-
+const FilterBar: React.FC<FilterBarProps> = ({setShowPopUp}) => {
     return (
         <>
             <div className='material'>
@@ -135,24 +79,74 @@ const FilterBar = () => {
             </div>
             <ColorButton variant="outlined">Apply Filter</ColorButton>
             <p>----- OR ------</p>
-            <ColorButton variant="outlined">Create New Job</ColorButton>
+            <ColorButton variant="outlined" onClick={() => setShowPopUp(true)}>Create New Job</ColorButton>
         </>
     )
 };
 
+const handleDelete = (index: number): void => {
+    console.log('delete clicked ', index)
+};
 
 
 export default function Market({ user }: { user: AuthUser }) {
+    const [ showPopUp, setShowPopUp ] = useState<boolean>(false);
+    const [showAlert, setShowAlert] = useState<boolean>(false);
+    const [alertType, setAlertType] = useState<string>('');
+    const [showAlertMessage, setShowAlertMessage] = useState<string>('');
+    const [showDelete, setShowDelete] = useState<boolean>(false); // set true when the new row is created for 1 min
+
     return (
         <>
             <div className='filter-container'>
                 <div className='filter-div'>
-                    <FilterBar />
+                    <FilterBar 
+                        setShowPopUp={setShowPopUp}
+                    />
                 </div>
-                <div className='jobs-list'> Job List</div>
-                <p>Job List</p>
-                <CreateJob user={user} />
+                <div className='jobs-list'>
+                    <List
+                        subheader={
+                            <ListSubheader component="div" id="nested-list-subheader">
+                            Pending Printer Jobs
+                            </ListSubheader>
+                        }
+                    >
+                        {/* {items.map((item, index) => (
+                            <React.Fragment key={index}>
+                                <ListItem
+                                    secondaryAction={ showDelete &&
+                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(index)}>
+                                        <DeleteIcon />
+                                        </IconButton>
+                                    }
+                                    >
+                                    <ListItemText
+                                        primary={item}
+                                        secondary={secondary ? 'Secondary text' : null}
+                                    />
+                                </ListItem>
+                                {index < items.length - 1 && <Divider variant="middle" component="li" />}
+                            </React.Fragment>
+                        ))} */}
+                    </List>
+                </div>
             </div>
+            {showPopUp && 
+                <Popup 
+                    showPopUp = {showPopUp}
+                    setShowPopUp={setShowPopUp}
+                    setShowAlert={setShowAlert}
+                    setShowAlertMessage={setShowAlertMessage}
+                    setAlertType={setAlertType}
+                    user={user}
+                />
+            }
+            {showAlert && 
+                <Alert variant="filled" severity={alertType} onClose={() => {setShowAlert(false)}} className='alert-message'>
+                    {showAlertMessage}
+                </Alert>
+            }
         </>
     )
 }
