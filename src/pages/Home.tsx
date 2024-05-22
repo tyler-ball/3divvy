@@ -50,11 +50,10 @@ export default function Home({ user }: { user: AuthUser }) {
             authMode: 'userPool'
         });
         setUserJobs(jobs === null ? [] : jobs);
-        console.log("JOBS");
-        console.log(jobs);
+        console.log("JOBS: " + jobs);
     }
 
-    useEffect(() => { getUserJobs() }, []);
+    useEffect(() => { getUserJobs() });
 
     return (
         <JobsList jobs={userJobs} />
