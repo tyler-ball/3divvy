@@ -1,3 +1,33 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.main-div {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    background-color: #fff;
+    width: 80vw;
+    margin: 0 auto;
+    padding: 10px 50px 10px 50px;
+}
+
+.jobs-tab thead tr {
+    font-weight: bold;
+}
+
+.jobs-tab td {
+    padding: 5px;
+}
+
+.jobs-tab td:nth-child(1) {
+    width: 10%;
+}
+.jobs-tab td:nth-child(2) {
+    width: 10%;
+}
+
 .App {
   text-align: center;
   height: 100vh;
