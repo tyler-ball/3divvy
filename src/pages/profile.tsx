@@ -1,4 +1,3 @@
-import { UseAuthenticator } from '@aws-amplify/ui-react-core';
 import { AuthUser } from 'aws-amplify/auth';
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
@@ -9,7 +8,7 @@ type UserProfile = Schema["UserProfile"]["type"]
 
 const client = generateClient<Schema>();
 
-export default function Profile({ signOut, user }: { signOut: UseAuthenticator['signOut'] | undefined, user: AuthUser | undefined }) {
+export default function Profile({ user }: { user: AuthUser | undefined }) {
     const [userProfiles, setUserProfiles] = useState<UserProfile[]>([])
 
     useEffect(() => {
@@ -17,7 +16,7 @@ export default function Profile({ signOut, user }: { signOut: UseAuthenticator['
             // filter: { profileOwner: { eq: filterId } },
             authMode: "userPool"
         }).subscribe({
-            next: ({ items, isSynced }) => {
+            next: ({ items }) => {
                 setUserProfiles([...items]);
             },
         });
@@ -28,15 +27,15 @@ export default function Profile({ signOut, user }: { signOut: UseAuthenticator['
         <>
             <h1>{user?.signInDetails?.loginId}'s Profile</h1>
 
-            {userProfiles[0] ? <UserProfileUpdateForm
-                id={userProfiles[0].id}
-                overrides={{
-                    profileOwner: { isDisabled: true },
-                    email: { isDisabled: true }
-                }}
-            /> : ''}
-
-            <button onClick={signOut}>Sign out</button>
+            {
+                userProfiles[0] ? <UserProfileUpdateForm
+                    id={userProfiles[0].id}
+                    overrides={{
+                        profileOwner: { isDisabled: true },
+                        email: { isDisabled: true }
+                    }}
+                /> : ''
+            }
         </>
     )
 }

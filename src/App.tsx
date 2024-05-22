@@ -20,7 +20,7 @@ function App() {
                                     <Route index element={<Home user={user} />} />
                                     <Route path='/home' element={<Home user={user} />} />
                                     <Route path='/market' element={<Market user={user} />} />
-                                    <Route path='/profile' element={<Profile signOut={signOut} user={user} />} />
+                                    <Route path='/profile' element={<Profile user={user} />} />
                                     <Route path="*" element={<NoPage />} />
                                 </Routes>
                             </>

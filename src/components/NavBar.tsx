@@ -11,6 +11,7 @@ export default function NavBar({ signOut }: { signOut: UseAuthenticator['signOut
                     <tr>
                         <td><Link to='/'>Home</Link></td>
                         <td><Link to='/market'>Marketplace</Link></td>
+                        <td><Link to='/profile'>Profile</Link></td>
                         <td>
                             <button
                                 onClick={signOut}
