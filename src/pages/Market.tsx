@@ -15,8 +15,15 @@ import {
     TableHead,
     TableRow,
     TableCell,
+    TableFooter,
+    TablePagination,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
+import { useTheme } from '@mui/material/styles';
 import Popup from '../components/PopUp';
 import Alert from '@mui/material/Alert';
 import { generateClient } from 'aws-amplify/data';
@@ -91,6 +98,72 @@ const FilterBar: React.FC<FilterBarProps> = ({ setShowPopUp }) => {
     )
 };
 
+interface TablePaginationActionsProps {
+    count: number;
+    page: number;
+    rowsPerPage: number;
+    onPageChange: (
+        event: React.MouseEvent<HTMLButtonElement>,
+        newPage: number,
+    ) => void;
+}
+
+function TablePaginationActions(props: TablePaginationActionsProps) {
+    const theme = useTheme();
+    const { count, page, rowsPerPage, onPageChange } = props;
+
+    const handleFirstPageButtonClick = (
+        event: React.MouseEvent<HTMLButtonElement>,
+    ) => {
+        onPageChange(event, 0);
+    };
+
+    const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        onPageChange(event, page - 1);
+    };
+
+    const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        onPageChange(event, page + 1);
+    };
+
+    const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+    };
+
+    return (
+        <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+            <IconButton
+                onClick={handleFirstPageButtonClick}
+                disabled={page === 0}
+                aria-label="first page"
+            >
+                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+            </IconButton>
+            <IconButton
+                onClick={handleBackButtonClick}
+                disabled={page === 0}
+                aria-label="previous page"
+            >
+                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+            </IconButton>
+            <IconButton
+                onClick={handleNextButtonClick}
+                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                aria-label="next page"
+            >
+                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+            </IconButton>
+            <IconButton
+                onClick={handleLastPageButtonClick}
+                disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+                aria-label="last page"
+            >
+                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+            </IconButton>
+        </Box>
+    );
+}
+
 const handleDelete = (index: number): void => {
     console.log('delete clicked ', index)
 };
@@ -104,6 +177,8 @@ export default function Market({ user }: { user: AuthUser }) {
     const [showAlertMessage, setShowAlertMessage] = useState<string>('');
     const [showDelete, setShowDelete] = useState<boolean>(false); // set true when the new row is created for 1 min
     const [jobsList, setJobsList] = useState<JobList[]>([]);
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     useEffect(() => {
         const client = generateClient<Schema>();
@@ -119,6 +194,24 @@ export default function Market({ user }: { user: AuthUser }) {
         };
         fetchData();
     }, [])
+
+    const emptyRows =
+        page > 0 ? Math.max(0, (1 + page) * rowsPerPage - jobsList.length) : 0;
+
+    const handleChangePage = (
+        event: React.MouseEvent<HTMLButtonElement> | null,
+        newPage: number,
+    ) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
 
     return (
         <>
@@ -138,7 +231,7 @@ export default function Market({ user }: { user: AuthUser }) {
                                     <TableCell>Title</TableCell>
                                     <TableCell align="center">Description</TableCell>
                                     <TableCell align="center">Amount Offered ($)</TableCell>
-                                    <TableCell></TableCell>
+                                    <TableCell align="right">Action</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -152,7 +245,7 @@ export default function Market({ user }: { user: AuthUser }) {
                                         </TableCell>
                                         <TableCell align="center">{row.description}</TableCell>
                                         <TableCell align="center">{row.amountOffered}</TableCell>
-                                        <TableCell>
+                                        <TableCell align="right">
                                             <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(index)}>
                                                 <DeleteIcon />
                                             </IconButton>
@@ -160,9 +253,30 @@ export default function Market({ user }: { user: AuthUser }) {
                                     </TableRow>
                                 ))}
                             </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TablePagination
+                                        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+                                        colSpan={4}
+                                        count={jobsList.length}
+                                        rowsPerPage={rowsPerPage}
+                                        page={page}
+                                        slotProps={{
+                                            select: {
+                                                inputProps: {
+                                                    'aria-label': 'rows per page',
+                                                },
+                                                native: true,
+                                            },
+                                        }}
+                                        onPageChange={handleChangePage}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                        ActionsComponent={TablePaginationActions}
+                                    />
+                                </TableRow>
+                            </TableFooter>
                         </Table>
                     </TableContainer>
-                    
                 </div>
             </div>
             {showPopUp &&
