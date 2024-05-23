@@ -164,9 +164,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
     );
 }
 
-const handleDelete = (index: number): void => {
-    console.log('delete clicked ', index)
-};
 
 type JobList = Schema['Job']['type'];
 
@@ -180,8 +177,9 @@ export default function Market({ user }: { user: AuthUser }) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+    const client = generateClient<Schema>();
+
     useEffect(() => {
-        const client = generateClient<Schema>();
         const fetchData = async () => {
             try {
                 const { data: jobs } = await client.models.Job.list({
@@ -193,7 +191,7 @@ export default function Market({ user }: { user: AuthUser }) {
             }
         };
         fetchData();
-    }, [])
+    }, [jobsList])
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - jobsList.length) : 0;
@@ -210,6 +208,20 @@ export default function Market({ user }: { user: AuthUser }) {
     ) => {
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
+    };
+
+    const handleDelete = async(id: string) => {
+        try {
+            await client.models.Job.delete({'id': id});
+            setAlertType('success')
+            setShowAlertMessage('Job deleted successfully')
+            setShowAlert(true)
+        } catch (error) {
+            setAlertType('error')
+            setShowAlertMessage('Error deleting the job')
+            setShowAlert(true)
+            console.log('Error while deleting an job: ',error);
+        }
     };
 
 
@@ -246,7 +258,7 @@ export default function Market({ user }: { user: AuthUser }) {
                                         <TableCell align="center">{row.description}</TableCell>
                                         <TableCell align="center">{row.amountOffered}</TableCell>
                                         <TableCell align="right">
-                                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(index)}>
+                                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(row.id)}>
                                                 <DeleteIcon />
                                             </IconButton>
                                         </TableCell>

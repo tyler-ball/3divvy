@@ -99,6 +99,8 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
         }
     }
 
+    const isDisabled = !formData.title || !formData.description || formData.amt_offered <= 0;
+
     return (
         <>
             <Dialog open={showPopUp} maxWidth="xs" classes={{ paper: classes.dialogWrapper }}>
@@ -121,6 +123,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                     >
                         <Grid item className={classes.gridText}>
                             <TextField
+                                required
                                 variant="outlined"
                                 label="Title"
                                 size="small"
@@ -132,6 +135,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         </Grid>
                         <Grid item className={classes.gridText} padding='15px 0 15px 0'>
                             <TextField
+                                required
                                 variant="outlined"
                                 label="Description"
                                 multiline
@@ -144,6 +148,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         </Grid>
                         <Grid item className={classes.gridText}>
                             <TextField
+                                required
                                 variant="outlined"
                                 label="Amount"
                                 type="number"
@@ -161,6 +166,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         onClick={handleCreateJob}
                         color="primary"
                         variant="contained"
+                        disabled={isDisabled}
                     >
                         Create Job
                     </Button>
