@@ -1,4 +1,5 @@
 import { generateClient } from 'aws-amplify/data';
+import { Button } from '@mui/material';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import type { Schema } from '../../amplify/data/resource';
 import { AuthUser } from 'aws-amplify/auth';
@@ -60,7 +61,9 @@ function JobsList(props: { jobs: Job[] }) {
                             <FontAwesomeIcon icon={faEdit} />
                         </Link>
                     </td>
-                    <td><FontAwesomeIcon icon={faTrash} /></td>
+                        <Link to={`/home/deleteJob/${job['id']}`}>
+                            <FontAwesomeIcon icon={faTrash} />
+                        </Link>
                     <td></td>
                 </tr>);
             }
@@ -150,7 +153,41 @@ export function EditJob(props) {
 }
 
 export function DeleteJob(props) {
-    return (<p>Delete</p>);
+    const params = useParams();
+    const navigate = useNavigate();
+    const job_id = params['job_id'];
+    const client = generateClient<Schema>();
+    const { user, signOut } = useAuthenticator((context) => [context.user]);
+    const [job, setJob] = useState<Job>({
+        'title': '',
+        'description': '',
+        'amt_offered': 0
+    });
+
+    const getJob = async () => {
+        const { data: job, errors } = await client.models.Job.get({
+            id: job_id
+        });
+
+        setJob(job);
+    }
+
+    const deleteJob = async () => {
+        const { data: new_job, errors } = await client.models.Job.delete({
+            id: job_id
+        });
+        if(errors === undefined) {
+            navigate("/home");
+        } else {
+            console.log(errors);
+        }
+    }
+
+    return (
+    <div>
+        <p>Are you sure you want to delete job {job['title']}?</p>
+        <Button color="primary" onClick={deleteJob}>Delete</Button>
+    </div>);
 }
 
 export default function () {
