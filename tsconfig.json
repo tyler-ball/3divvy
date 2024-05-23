@@ -24,7 +24,10 @@
   },
   "include": [
     "src",
-    "amplify"
+  ],
+  "exclude": [
+    "amplify/**/*",
+    ".amplify/**/*"
   ],
   "references": [
     {
