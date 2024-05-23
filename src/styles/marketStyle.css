@@ -30,6 +30,15 @@
   width: calc(100% - 200px);
   margin: 20px 10px 0 10px;
   height: 650px;
+  
+  ul {
+    background-color: white;
+    border: none;
+  }
+
+  h2 {
+    margin: 10px
+  }
 }
 
 .material,

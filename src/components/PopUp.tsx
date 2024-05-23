@@ -49,12 +49,12 @@ type CreateJobResult = {
 async function CreateJob({ user, formData }: { user: AuthUser, formData: FormData }): Promise<CreateJobResult> {
     try {
         const client = generateClient<Schema>();
-        // await client.models.Job.create({
-        //     submitter: user.userId,
-        //     title: formData.title,
-        //     description: formData.description,
-        //     amountOffered: formData.amt_offered,
-        // });
+        await client.models.Job.create({
+            submitter: user.userId,
+            title: formData.title,
+            description: formData.description,
+            amountOffered: formData.amt_offered,
+        });
         return { success: true, message: 'Job created successfully.' };
     } catch (error) {
         return { success: false, message: 'Failed to create job.' };

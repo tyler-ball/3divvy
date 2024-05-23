@@ -1,19 +1,26 @@
 import React, { useState, Dispatch, useEffect } from 'react';
 import { AuthUser } from 'aws-amplify/auth';
-import { 
+import {
     FormControlLabel,
     TextField,
     Box,
     Button,
     Checkbox,
-    styled, 
-    List,
-    ListSubheader,
-    Dialog,
-    Stack,
+    styled,
+    Divider,
+    IconButton,
+    Table,
+    TableContainer,
+    TableBody,
+    TableHead,
+    TableRow,
+    TableCell,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Popup from '../components/PopUp';
 import Alert from '@mui/material/Alert';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../amplify/data/resource';
 
 import '../styles/marketStyle.css';
 
@@ -30,7 +37,7 @@ type FilterBarProps = {
     setShowPopUp: Dispatch<React.SetStateAction<boolean>>,
 }
 
-const FilterBar: React.FC<FilterBarProps> = ({setShowPopUp}) => {
+const FilterBar: React.FC<FilterBarProps> = ({ setShowPopUp }) => {
     return (
         <>
             <div className='material'>
@@ -88,53 +95,79 @@ const handleDelete = (index: number): void => {
     console.log('delete clicked ', index)
 };
 
+type JobList = Schema['Job']['type'];
 
 export default function Market({ user }: { user: AuthUser }) {
-    const [ showPopUp, setShowPopUp ] = useState<boolean>(false);
+    const [showPopUp, setShowPopUp] = useState<boolean>(false);
     const [showAlert, setShowAlert] = useState<boolean>(false);
     const [alertType, setAlertType] = useState<string>('');
     const [showAlertMessage, setShowAlertMessage] = useState<string>('');
     const [showDelete, setShowDelete] = useState<boolean>(false); // set true when the new row is created for 1 min
+    const [jobsList, setJobsList] = useState<JobList[]>([]);
+
+    useEffect(() => {
+        const client = generateClient<Schema>();
+        const fetchData = async () => {
+            try {
+                const { data: jobs } = await client.models.Job.list({
+                    authMode: 'userPool'
+                });
+                setJobsList(jobs);
+            } catch (error) {
+                console.error("Error fetching jobs:", error);
+            }
+        };
+        fetchData();
+    }, [])
 
     return (
         <>
             <div className='filter-container'>
                 <div className='filter-div'>
-                    <FilterBar 
+                    <FilterBar
                         setShowPopUp={setShowPopUp}
                     />
                 </div>
                 <div className='jobs-list'>
-                    <List
-                        subheader={
-                            <ListSubheader component="div" id="nested-list-subheader">
-                            Pending Printer Jobs
-                            </ListSubheader>
-                        }
-                    >
-                        {/* {items.map((item, index) => (
-                            <React.Fragment key={index}>
-                                <ListItem
-                                    secondaryAction={ showDelete &&
-                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(index)}>
-                                        <DeleteIcon />
-                                        </IconButton>
-                                    }
+                    <h2>Jobs List</h2>
+                    <Divider></Divider>
+                    <TableContainer>
+                        <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Title</TableCell>
+                                    <TableCell align="center">Description</TableCell>
+                                    <TableCell align="center">Amount Offered ($)</TableCell>
+                                    <TableCell></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {jobsList.map((row, index) => (
+                                    <TableRow
+                                        key={row.title}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                    <ListItemText
-                                        primary={item}
-                                        secondary={secondary ? 'Secondary text' : null}
-                                    />
-                                </ListItem>
-                                {index < items.length - 1 && <Divider variant="middle" component="li" />}
-                            </React.Fragment>
-                        ))} */}
-                    </List>
+                                        <TableCell component="th" scope="row">
+                                            {row.title}
+                                        </TableCell>
+                                        <TableCell align="center">{row.description}</TableCell>
+                                        <TableCell align="center">{row.amountOffered}</TableCell>
+                                        <TableCell>
+                                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(index)}>
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    
                 </div>
             </div>
-            {showPopUp && 
-                <Popup 
-                    showPopUp = {showPopUp}
+            {showPopUp &&
+                <Popup
+                    showPopUp={showPopUp}
                     setShowPopUp={setShowPopUp}
                     setShowAlert={setShowAlert}
                     setShowAlertMessage={setShowAlertMessage}
@@ -142,8 +175,8 @@ export default function Market({ user }: { user: AuthUser }) {
                     user={user}
                 />
             }
-            {showAlert && 
-                <Alert variant="filled" severity={alertType} onClose={() => {setShowAlert(false)}} className='alert-message'>
+            {showAlert &&
+                <Alert variant="filled" severity={alertType} onClose={() => { setShowAlert(false) }} className='alert-message'>
                     {showAlertMessage}
                 </Alert>
             }
