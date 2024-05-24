@@ -55,9 +55,6 @@ function formatDate(date_str) {
 
 function JobsList(props: { jobs: Job[] }) {
     const jobs = props['jobs'];
-    if(jobs.length == 0) {
-        return (<p>No jobs yet</p>);
-    }
 
     return (
     <TableContainer>
@@ -218,14 +215,14 @@ export function DeleteJob(props) {
 export default function () {
     const client = generateClient<Schema>();
     const { user, signOut } = useAuthenticator((context) => [context.user]);
-    const [userJobs, setUserJobs] = useState<Job[]>([]);
+    const [userJobs, setUserJobs] = useState<Job[][]>([]);
     const [pageTokens, setPageTokens] = useState([]);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
 
     const fetchData = async (init, nextPage) => {
         if(init || (hasMorePages && currentPageIndex === pageTokens.length)) {
-            const {data: userJobs, nextToken} = await client.models.Job.list({
+            const {data: jobs, nextToken} = await client.models.Job.list({
                 filter: {
                     submitter: {
                         'eq': user.userId
@@ -240,20 +237,28 @@ export default function () {
                 setHasMorePages(false);
             }
             setPageTokens([...pageTokens, nextToken]);
-            setUserJobs(userJobs);
+            setUserJobs([...userJobs, jobs]);
+            console.log([...userJobs, jobs]);
+            console.log("NEW JOBS");
+            console.log(jobs);
 
-            if(nextPage) {
-                setCurrentPageIndex((pi) => pi + 1);
-            }
+        }
+
+        if(nextPage) {
+            setCurrentPageIndex((pi) => pi + 1);
         }
 
     }
 
     useEffect(() => { fetchData(true, false) }, []);
 
+    if(userJobs.length === 0) {
+        return (<p>No jobs yet.</p>);
+    }
+
     return (
         <>
-        <JobsList jobs={userJobs}/>
+        <JobsList jobs={userJobs[currentPageIndex - 1]}/>
         <Pagination
             currentPage={currentPageIndex}
             totalPages={pageTokens.length}
