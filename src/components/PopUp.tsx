@@ -8,32 +8,9 @@ import {
     DialogContent,
     DialogActions,
 } from "@mui/material";
-import { makeStyles } from '@mui/styles';
 import { AuthUser } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
-
-const useStyles = makeStyles({
-    dialogWrapper: {
-        padding: '10px',
-        display: 'flex',
-        alignItems: 'center',
-    },
-
-    gridText: {
-        width: '100%',
-    },
-
-    closeBtn: {
-        position: 'absolute',
-        right: '10px',
-    },
-
-    alertText: {
-        width: '90px',
-        zIndex: 1,
-    },
-})
 
 interface FormData {
     title: string;
@@ -103,14 +80,17 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
 
     return (
         <>
-            <Dialog open={showPopUp} maxWidth="xs" classes={{ paper: classes.dialogWrapper }}>
+            <Dialog 
+                open={showPopUp}
+                maxWidth="xs"
+            >
                 <DialogTitle>
                     Create Job
                     <Button
                         onClick={() => setShowPopUp(false)}
-                        className={classes.closeBtn}
                         variant="text"
                         color="error"
+                        sx={{position: 'absolute', right: '10px'}}
                     >
                         X
                     </Button>
@@ -121,7 +101,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Grid item className={classes.gridText}>
+                        <Grid item sx={{width: '100%'}}>
                             <TextField
                                 required
                                 variant="outlined"
@@ -133,7 +113,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item className={classes.gridText} padding='15px 0 15px 0'>
+                        <Grid item sx={{width: '100%', padding: '15px 0 15px 0'}}>
                             <TextField
                                 required
                                 variant="outlined"
@@ -146,7 +126,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item className={classes.gridText}>
+                        <Grid item sx={{width: '100%'}}>
                             <TextField
                                 required
                                 variant="outlined"
