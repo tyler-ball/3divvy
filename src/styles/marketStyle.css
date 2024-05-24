@@ -29,7 +29,15 @@
   border: 1px solid rgb(161, 161, 161);
   width: calc(100% - 200px);
   margin: 20px 10px 0 10px;
-  height: 650px;
+  
+  ul {
+    background-color: white;
+    border: none;
+  }
+
+  h2 {
+    margin: 10px
+  }
 }
 
 .material,
@@ -63,4 +71,13 @@
 
 .filter-bar select {
   flex-basis: 200px;
+}
+
+.alert-message{
+  position: fixed;
+  top: 65px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: 512px; 
 }
