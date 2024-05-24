@@ -1,4 +1,4 @@
-import React, { Dispatch, useState, useEffect } from "react";
+import React, { Dispatch, useState } from "react";
 import {
     Grid,
     TextField,
@@ -8,9 +8,24 @@ import {
     DialogContent,
     DialogActions,
 } from "@mui/material";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
 import { AuthUser } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
+
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 interface FormData {
     title: string;
@@ -48,7 +63,6 @@ type PopUpProps = {
 }
 
 export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAlertMessage, setAlertType, user }: PopUpProps) {
-    const classes = useStyles();
     
     const [formData, setFormData] = useState({
         "title": "",
@@ -139,9 +153,22 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 onChange={handleChange}
                             />
                         </Grid>
+                        <Grid item sx={{width: '100%'}}>
+                            <Button
+                                component="label"
+                                variant="contained"
+                                sx={{margin: '10px 0 10px 0', display: 'flex'}}
+                                startIcon={<CloudUploadIcon />}
+                            >
+                                Upload file
+                                <VisuallyHiddenInput type="file" />
+                            </Button>
+                        </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions
+                    sx={{display: 'flex', justifyContent: 'center'}}
+                >
                     <Button
                         onClick={handleCreateJob}
                         color="primary"
