@@ -1,11 +1,29 @@
 import { generateClient } from 'aws-amplify/data';
-import { Button } from '@mui/material';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import type { Schema } from '../../amplify/data/resource';
 import { AuthUser } from 'aws-amplify/auth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { BrowserRouter as Router, Route, Switch, Link, useNavigate, useParams } from 'react-router-dom';
+import { Pagination } from '@aws-amplify/ui-react';
+import {
+    FormControlLabel,
+    TextField,
+    Box,
+    Button,
+    Checkbox,
+    styled,
+    Divider,
+    IconButton,
+    Table,
+    TableContainer,
+    TableBody,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableFooter,
+    TablePagination,
+} from '@mui/material';
 
 import '../styles/homeStyle.css'
 import { useEffect, useState } from 'react';
@@ -37,39 +55,46 @@ function formatDate(date_str) {
 
 function JobsList(props: { jobs: Job[] }) {
     const jobs = props['jobs'];
+    if(jobs.length == 0) {
+        return (<p>No jobs yet</p>);
+    }
+
     return (
-        <table className='jobs-tab'>
-            <thead>
-                <tr>
-                    <td>Title</td>
-                    <td>Created</td>
-                    <td>Amount Offered</td>
-                    <td>Description</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-            {jobs.map((job) => {
-                return (<tr key={job['id']}>
-                    <td>{job['title']}</td>
-                    <td>{formatDate(job['createdAt'])}</td>
-                    <td>{job['amountOffered']}</td>
-                    <td>{job['description']}</td>
-                    <td>
-                        <Link to={`/home/editJob/${job['id']}`}>
-                            <FontAwesomeIcon icon={faEdit} />
-                        </Link>
-                    </td>
-                        <Link to={`/home/deleteJob/${job['id']}`}>
-                            <FontAwesomeIcon icon={faTrash} />
-                        </Link>
-                    <td></td>
-                </tr>);
-            }
-            )}
-            </tbody>
-        </table>
+    <TableContainer>
+        <Table>
+        <TableHead>
+            <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Time Created</TableCell>
+                <TableCell>Amount Offered ($)</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+            </TableRow>
+        </TableHead>
+        <TableBody>
+        {jobs.map((job) => {
+            return (
+            <TableRow key={job['id']}>
+                <TableCell>{job['title']}</TableCell>
+                <TableCell>{formatDate(job['createdAt'])}</TableCell>
+                <TableCell>{job['amountOffered']}</TableCell>
+                <TableCell>{job['description']}</TableCell>
+                <TableCell>
+                    <Link to={`/home/editJob/${job['id']}`}>
+                        <FontAwesomeIcon icon={faEdit} />
+                    </Link>
+                </TableCell>
+                <TableCell>
+                    <Link to={`/home/deleteJob/${job['id']}`}>
+                        <FontAwesomeIcon icon={faTrash} />
+                    </Link>
+                </TableCell>
+            </TableRow>);
+        })}
+        </TableBody>
+        </Table>
+    </TableContainer>
     );
 }
 
@@ -194,24 +219,49 @@ export default function () {
     const client = generateClient<Schema>();
     const { user, signOut } = useAuthenticator((context) => [context.user]);
     const [userJobs, setUserJobs] = useState<Job[]>([]);
+    const [pageTokens, setPageTokens] = useState([]);
+    const [currentPageIndex, setCurrentPageIndex] = useState(1);
+    const [hasMorePages, setHasMorePages] = useState(true);
 
-    const getUserJobs = async () => {
-        const { data: jobs } = await client.models.Job.list({
-            filter: {
-                submitter: {
-                    'eq': user.userId
-                }
-            },
-            authMode: 'userPool'
-        });
-        setUserJobs(jobs === null ? [] : jobs);
+    const fetchData = async (init, nextPage) => {
+        if(init || (hasMorePages && currentPageIndex === pageTokens.length)) {
+            const {data: userJobs, nextToken} = await client.models.Job.list({
+                filter: {
+                    submitter: {
+                        'eq': user.userId
+                    }
+                },
+                limit: 5,
+                nextToken: pageTokens[pageTokens.length - 1],
+                authMode: 'userPool'
+            });
+
+            if(! nextToken) {
+                setHasMorePages(false);
+            }
+            setPageTokens([...pageTokens, nextToken]);
+            setUserJobs(userJobs);
+
+            if(nextPage) {
+                setCurrentPageIndex((pi) => pi + 1);
+            }
+        }
+
     }
 
-    useEffect(() => { getUserJobs() }, []);
+    useEffect(() => { fetchData(true, false) }, []);
 
     return (
         <>
         <JobsList jobs={userJobs}/>
+        <Pagination
+            currentPage={currentPageIndex}
+            totalPages={pageTokens.length}
+            hasMorePages={hasMorePages}
+            onPrevious={() => setCurrentPageIndex(currentPageIndex - 1)}
+            onNext={() => fetchData(false, true)}
+            onChange={(pageIndex) => setCurrentPageIndex(pageIndex)}
+        />
         </>
     )
 }
