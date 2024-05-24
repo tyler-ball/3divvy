@@ -11,8 +11,9 @@ const schema = a.schema({
   RequiredMaterials: a.enum(["PLA", "NYLON"]),
   Job: a
     .model({
+      jobId: a.string().required(),
       submitter: a.string().required(),
-      title: a.string(),
+      title: a.string().required(),
       description: a.string(),
       amountOffered: a.float(),
       requiredMaterials: a.ref("RequiredMaterials"),

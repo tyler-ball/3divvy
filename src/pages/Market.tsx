@@ -7,7 +7,10 @@ import { styled } from '@mui/material/styles';
 import { AuthUser } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import type { Schema } from '../../amplify/data/resource';
+import React from 'react';
+import { uploadData } from 'aws-amplify/storage';
 
 import '../styles/marketStyle.css';
 
@@ -37,56 +40,83 @@ function CreateJob({ user }: { user: AuthUser }) {
         });
     };
 
+    //Handle Selecting FIle from system
+    const [file, setFile] = React.useState();
+    const handleFileChange = (event: any) => {
+        setFile(event.target.files[0]);
+    };
+
     const createJob = async () => {
+        if(file == null) {
+            alert("Please Select FIle");
+            return;
+        }
+        const newId = uuidv4();
+        const timestamp = Date.now();
+        const uniqueId = "" + newId + "-" + timestamp + "-" + file.name;
         await client.models.Job.create({
+            jobId: uniqueId,
             submitter: user.userId,
             title: formData.title,
             description: formData.description,
             amountOffered: formData.amt_offered,
         });
+        alert("LOGGED: " + uniqueId);
+        uploadData({
+            path: `models/${user.userId}/${uniqueId}`,
+            data: file,
+        });
+        alert("Uploaded!");
     }
 
     return (
-        <table>
-            <tbody>
-                <tr>
-                    <td><label>Title</label></td>
-                    <td><input
-                        type="text"
-                        name="title"
-                        value={formData['title']}
-                        onChange={handleChange}
-                    /></td>
-                </tr>
+        <div>
+            <label>3D Model File</label>
+            <input type="file" onChange={handleFileChange} />
+            <table>
+                <tbody>
+                    <tr>
+                        <td><label>Title</label></td>
+                        <td><input
+                            type="text"
+                            name="title"
+                            value={formData['title']}
+                            onChange={handleChange}
+                        /></td>
+                    </tr>
 
-                <tr>
-                    <td><label>Description</label></td>
-                    <td><input
-                        type="text"
-                        name="description"
-                        value={formData['description']}
-                        onChange={handleChange}
-                    /></td>
-                </tr>
-                <tr>
-                    <td><label>Amount Offered</label></td>
-                    <td><input
-                        type="number"
-                        name="amt_offered"
-                        step="0.01"
-                        value={formData['amt_offered']}
-                        onChange={handleChange}
-                    /></td>
-                </tr>
-                <tr>
-                    <button onClick={createJob}>Create</button>
-                </tr>
-            </tbody>
-        </table>);
+                    <tr>
+                        <td><label>Description</label></td>
+                        <td><input
+                            type="text"
+                            name="description"
+                            value={formData['description']}
+                            onChange={handleChange}
+                        /></td>
+                    </tr>
+                    <tr>
+                        <td><label>Amount Offered</label></td>
+                        <td><input
+                            type="number"
+                            name="amt_offered"
+                            step="0.01"
+                            value={formData['amt_offered']}
+                            onChange={handleChange}
+                        /></td>
+                    </tr>
+
+                    <tr>
+                        <button onClick={createJob}>Create</button>
+                    </tr>
+                </tbody>
+                
+            </table>
+        </div>
+        
+        );
 }
 
 const FilterBar = () => {
-
     return (
         <>
             <div className='material'>
@@ -139,8 +169,6 @@ const FilterBar = () => {
         </>
     )
 };
-
-
 
 export default function Market({ user }: { user: AuthUser }) {
     return (
