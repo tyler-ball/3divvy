@@ -1,8 +1,0 @@
-name: 3divvy
-runtime:
-  name: python
-  options:
-    virtualenv: .venv
-main: pulumi/
-description: 3Divvy's infrastructure definition
-

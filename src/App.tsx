@@ -19,15 +19,15 @@ function App() {
                             <>
                                 <NavBar signOut={signOut} />
                                 <div className="main-div">
-                                <Routes>
-                                    <Route index element={<Home />} />
-                                    <Route path='/home' element={<Home user={user} />} />
-                                    <Route path='/home/editJob/:job_id' element={ <EditJob/> } />
-                                    <Route path='/home/deleteJob/:job_id' element={ <DeleteJob/> } />
-                                    <Route path='/market' element={<Market user={user} />} />
-                                    <Route path='/profile' element={<Profile user={user} />} />
-                                    <Route path="*" element={<NoPage />} />
-                                </Routes>
+                                    <Routes>
+                                        <Route index element={<Home />} />
+                                        <Route path='/home' element={<Home />} />
+                                        <Route path='/home/editJob/:job_id' element={<EditJob />} />
+                                        <Route path='/home/deleteJob/:job_id' element={<DeleteJob />} />
+                                        <Route path='/market' element={<Market user={user} />} />
+                                        <Route path='/profile' element={<Profile user={user} />} />
+                                        <Route path="*" element={<NoPage />} />
+                                    </Routes>
                                 </div>
                             </>
                         )}
