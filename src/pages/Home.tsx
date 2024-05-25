@@ -16,56 +16,10 @@ import {
 } from '@mui/material';
 
 import '../styles/homeStyle.css'
+import JobsTable from '../components/JobsTable.tsx';
 import { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 
 type Job = Schema['Job']['type'];
-
-function formatDate(date_str: string): string {
-    return format(new Date(date_str), 'MM/dd/yy hh:mm aa');
-}
-
-function JobsList(props: { jobs: Job[] }) {
-    const jobs = props['jobs'];
-
-    return (
-        <TableContainer>
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Title</TableCell>
-                        <TableCell>Time Created</TableCell>
-                        <TableCell>Amount Offered ($)</TableCell>
-                        <TableCell>Description</TableCell>
-                        <TableCell></TableCell>
-                        <TableCell></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {jobs.map((job) => {
-                        return (
-                            <TableRow key={job['id']}>
-                                <TableCell>{job['title']}</TableCell>
-                                <TableCell>{formatDate(job['createdAt'])}</TableCell>
-                                <TableCell>{job['amountOffered']}</TableCell>
-                                <TableCell>{job['description']}</TableCell>
-                                <TableCell>
-                                    <Link to={`/home/editJob/${job['id']}`}>
-                                        <FontAwesomeIcon icon={faEdit} />
-                                    </Link>
-                                </TableCell>
-                                <TableCell>
-                                    <Link to={`/home/deleteJob/${job['id']}`}>
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </Link>
-                                </TableCell>
-                            </TableRow>);
-                    })}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-}
 
 export function EditJob() {
     const params = useParams();
@@ -185,60 +139,37 @@ export function DeleteJob(props) {
 }
 
 export default function () {
-    const client = generateClient<Schema>();
     const { user, signOut } = useAuthenticator((context) => [context.user]);
-    const [userJobs, setUserJobs] = useState<Job[][]>([]);
-    const [pageTokens, setPageTokens] = useState([]);
-    const [currentPageIndex, setCurrentPageIndex] = useState(1);
-    const [hasMorePages, setHasMorePages] = useState(true);
+    const userJobsFilter = { submitter: { eq: user.userId } };
+    const userContractJobsFilter = { 'contract.contractor': { eq: user.userId } };
 
-    const fetchData = async (init, nextPage) => {
-        if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
-            const { data: jobs, nextToken } = await client.models.Job.list({
-                filter: {
-                    submitter: {
-                        'eq': user.userId
-                    }
-                },
-                limit: 5,
-                nextToken: pageTokens[pageTokens.length - 1],
-                authMode: 'userPool'
-            });
-
-            if (!nextToken) {
-                setHasMorePages(false);
-            }
-            setPageTokens([...pageTokens, nextToken]);
-            setUserJobs([...userJobs, jobs]);
-            console.log([...userJobs, jobs]);
-            console.log("NEW JOBS");
-            console.log(jobs);
-
-        }
-
-        if (nextPage) {
-            setCurrentPageIndex((pi) => pi + 1);
-        }
-
-    }
-
-    useEffect(() => { fetchData(true, false) }, []);
-
-    if (userJobs.length === 0) {
-        return (<p>No jobs yet.</p>);
+    const rowSelectPopup = (job_id) => {
+        return (
+        <>
+        <Button>
+        <Link to={`/home/deleteJob/${job_id}`}>
+            <FontAwesomeIcon icon={faTrash} />
+            <span>Delete job</span>
+        </Link>
+        </Button>
+        <Button>
+        <Link to={`/home/editJob/${job_id}`}>
+            <FontAwesomeIcon icon={faEdit} />
+            <span>Edit job</span>
+        </Link>
+        </Button>
+        </>)
     }
 
     return (
         <>
-            <JobsList jobs={userJobs[currentPageIndex - 1]} />
-            <Pagination
-                currentPage={currentPageIndex}
-                totalPages={pageTokens.length}
-                hasMorePages={hasMorePages}
-                onPrevious={() => setCurrentPageIndex(currentPageIndex - 1)}
-                onNext={() => fetchData(false, true)}
-                onChange={(pageIndex) => setCurrentPageIndex(pageIndex)}
-            />
+        <h3>Jobs Posted by You</h3>
+        <JobsTable filters={userJobsFilter} 
+            selectPopup={rowSelectPopup}
+            allowEdit={true} 
+            allowDelete={true}/>
+        <h3>Jobs Accepted By You</h3>
+        <JobsTable filters={userContractJobsFilter}/>
         </>
     )
 }
