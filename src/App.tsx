@@ -3,7 +3,7 @@ import '@aws-amplify/ui-react/styles.css'
 import './App.css';
 import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import Home from './pages/Home.tsx';
-import { EditJob, DeleteJob } from './pages/Home.tsx';
+import { EditJob, DeleteJob, EditContract, DeleteContract } from './pages/Home.tsx';
 import Market from './pages/Market.tsx';
 import NoPage from './pages/NoPage.tsx';
 import NavBar from './components/NavBar.jsx';
@@ -24,6 +24,8 @@ function App() {
                                         <Route path='/home' element={<Home />} />
                                         <Route path='/home/editJob/:job_id' element={<EditJob />} />
                                         <Route path='/home/deleteJob/:job_id' element={<DeleteJob />} />
+                                        <Route path='/home/editContract/:contract_id' element={<EditContract />} />
+                                        <Route path='/home/deleteContract/:contract_id' element={<DeleteContract />} />
                                         <Route path='/market' element={<Market user={user} />} />
                                         <Route path='/profile' element={<Profile user={user} />} />
                                         <Route path="*" element={<NoPage />} />

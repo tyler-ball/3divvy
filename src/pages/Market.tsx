@@ -77,21 +77,21 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
             <div className='material'>
                 <label>Material</label>
                 <Box className='filters'>
-                {Object.keys(formData.materials).map((mat) => (
-                    <FormControlLabel control={<Checkbox 
-                        checked={ formData.materials[mat] }
-                        onChange={ (e) => { onMaterialCheck(mat, e) } }
-                    />} label={mat} />
-                ))}
+                    {Object.keys(formData.materials).map((mat) => (
+                        <FormControlLabel control={<Checkbox
+                            checked={formData.materials[mat]}
+                            onChange={(e) => { onMaterialCheck(mat, e) }}
+                        />} label={mat} />
+                    ))}
                 </Box>
             </div>
             <div className='color'>
                 <label>Color</label>
                 <Box className='filters'>
                     {Object.keys(formData.colors).map((col) => (
-                        <FormControlLabel control={<Checkbox 
-                            checked={ formData.colors[col] }
-                            onChange={ (e) => { onColorCheck(col, e) } }
+                        <FormControlLabel control={<Checkbox
+                            checked={formData.colors[col]}
+                            onChange={(e) => { onColorCheck(col, e) }}
                         />} label={col} />
                     ))}
                 </Box>
@@ -104,7 +104,7 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
                         type="number"
                         size="small"
                         value={formData.minPrice}
-                        onChange={(e) => { handleNumericChange('minPrice', e) } }
+                        onChange={(e) => { handleNumericChange('minPrice', e) }}
                         InputProps={{
                             startAdornment: <InputAdornment position="start">$</InputAdornment>,
                         }}
@@ -122,7 +122,7 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
                         type="number"
                         size="small"
                         value={formData.maxPrice}
-                        onChange={(e) => { handleNumericChange('maxPrice', e) } }
+                        onChange={(e) => { handleNumericChange('maxPrice', e) }}
                         InputProps={{
                             startAdornment: <InputAdornment position="start">$</InputAdornment>,
                         }}
@@ -251,9 +251,9 @@ export default function Market({ user }: { user: AuthUser }) {
         setPage(0);
     };
 
-    const handleDelete = async(id: string) => {
+    const handleDelete = async (id: string) => {
         try {
-            await client.models.Job.delete({'id': id});
+            await client.models.Job.delete({ 'id': id });
             setAlertType('success')
             setShowAlertMessage('Job deleted successfully')
             setShowAlert(true)
@@ -261,7 +261,7 @@ export default function Market({ user }: { user: AuthUser }) {
             setAlertType('error')
             setShowAlertMessage('Error deleting the job')
             setShowAlert(true)
-            console.log('Error while deleting an job: ',error);
+            console.log('Error while deleting an job: ', error);
         }
     };
 
@@ -295,31 +295,31 @@ export default function Market({ user }: { user: AuthUser }) {
 
         let colors = [];
         let color, val;
-        for([color, val] of Object.entries(formData.colors)) {
-            if(val) {
+        for ([color, val] of Object.entries(formData.colors)) {
+            if (val) {
                 colors.push(color);
             }
         }
 
-        if(colors.length > 0) {
+        if (colors.length > 0) {
             new_filter.colors = { 'eq': colors };
         }
 
         let materials = [];
         let material;
-        for([material, val] of Object.entries(formData.materials)) {
-            if(val) {
+        for ([material, val] of Object.entries(formData.materials)) {
+            if (val) {
                 materials.push(material);
             }
         }
 
-        if(materials.length > 0) {
+        if (materials.length > 0) {
             new_filter.requiredMaterials = { 'eq': materials };
         }
 
 
         setFilters(new_filter);
-        let {data: jobs, errors} = await client.models.Job.list({
+        let { data: jobs, errors } = await client.models.Job.list({
             filter: new_filter
         });
     }
@@ -327,22 +327,23 @@ export default function Market({ user }: { user: AuthUser }) {
     const acceptJobAsContract = async (job_id) => {
         let resp = await client.models.Contract.create({
             jobID: job_id,
-            contractor: user.userId
+            contractor: user.userId,
+            status: 'Accepted'
         });
 
-        if('errors' in resp) {
+        if ('errors' in resp) {
             console.log("FAILED");
             // do sth about it.
         }
 
-        let {data: contracts, errs}= await client.models.Contract.list();
+        let { data: contracts, errs } = await client.models.Contract.list();
         console.log("CONTRACTS");
         console.log(contracts);
     }
 
     const rowSelectPopup = (job_id) => {
         return (
-        <Button onClick={() => acceptJobAsContract(job_id)}>Accept job as contract</Button>
+            <Button onClick={() => acceptJobAsContract(job_id)}>Accept job as contract</Button>
         );
     }
 
@@ -361,10 +362,10 @@ export default function Market({ user }: { user: AuthUser }) {
                     <h2>Jobs List</h2>
                     <Divider></Divider>
                     <Box>
-                    {Object.keys(filters).length > 0 ?
-                        (<JobsTable filters={filters} selectPopup={rowSelectPopup}/>) :
-                        (<p>Apply some filters, and we'll show available jobs</p>)
-                    }
+                        {Object.keys(filters).length > 0 ?
+                            (<JobsTable filters={filters} selectPopup={rowSelectPopup} />) :
+                            (<p>Apply some filters, and we'll show available jobs</p>)
+                        }
                     </Box>
                 </div>
             </div>
