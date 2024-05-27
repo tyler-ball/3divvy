@@ -17,9 +17,11 @@ import {
 
 import '../styles/homeStyle.css'
 import JobsTable from '../components/JobsTable.tsx';
+import ContractsTable from '../components/ContractsTable.tsx';
 import { useEffect, useState } from 'react';
 
 type Job = Schema['Job']['type'];
+type Contract = Schema['Contract']['type'];
 
 export function EditJob() {
     const params = useParams();
@@ -138,38 +140,137 @@ export function DeleteJob(props) {
         </div>);
 }
 
+export function EditContract() {
+    const params = useParams();
+    const navigate = useNavigate();
+    const contract_id = params['contract_id'];
+    const client = generateClient<Schema>();
+    const { user, signOut } = useAuthenticator((context) => [context.user]);
+    const [contract, setContract] = useState<Contract>({ status: '' });
+
+    const getContract = async () => {
+        const { data: contract, errors } = await client.models.Contract.get({
+            id: contract_id
+        });
+
+        setContract(contract);
+    }
+
+    const updateContract = async () => {
+        const { data: new_contract, errors } = await client.models.Contract.update(contract);
+        if (errors === undefined) {
+            navigate("/home");
+        }
+    }
+
+    useEffect(() => { getContract() }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        // Kind of a lazy hack. React will only rerender state based
+        // on an object if the new object resides at a different place
+        // in memory, even if its keys have been changed.
+        let contract_copy = JSON.parse(JSON.stringify(contract));
+        contract_copy[name] = value;
+        setContract(contract_copy);
+    };
+
+
+    return (
+        <table>
+            <tbody>
+                <tr>
+                    <td><label>Status</label></td>
+                    <td><select id="status" name="status" value={contract['status']} onChange={handleChange}>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Printing">Printing</option>
+                        <option value="Shipped">Shipped</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td><button onClick={updateContract}>Update</button></td>
+                </tr>
+            </tbody>
+        </table>);
+}
+
+export function DeleteContract(props) {
+    const params = useParams();
+    const navigate = useNavigate();
+    const contract_id = params['contract_id'];
+    const client = generateClient<Schema>();
+    const { user, signOut } = useAuthenticator((context) => [context.user]);
+    const [contract, setContract] = useState<Contract>();
+
+    const deleteContract = async () => {
+        const { data: new_contract, errors } = await client.models.Contract.delete({
+            id: contract_id
+        });
+        if (errors === undefined) {
+            navigate("/home");
+        } else {
+            console.log(errors);
+        }
+    }
+
+    return (
+        <div>
+            <p>Are you sure you want to delete this contract?</p>
+            <Button color="primary" onClick={deleteContract}>Delete</Button>
+        </div>);
+}
+
 export default function () {
     const { user, signOut } = useAuthenticator((context) => [context.user]);
     const userJobsFilter = { submitter: { eq: user.userId } };
     const userContractJobsFilter = { 'contract.contractor': { eq: user.userId } };
 
-    const rowSelectPopup = (job_id) => {
+    const jobSelectPopup = (job_id) => {
         return (
-        <>
-        <Button>
-        <Link to={`/home/deleteJob/${job_id}`}>
-            <FontAwesomeIcon icon={faTrash} />
-            <span>Delete job</span>
-        </Link>
-        </Button>
-        <Button>
-        <Link to={`/home/editJob/${job_id}`}>
-            <FontAwesomeIcon icon={faEdit} />
-            <span>Edit job</span>
-        </Link>
-        </Button>
-        </>)
+            <>
+                <Button>
+                    <Link to={`/home/deleteJob/${job_id}`}>
+                        <FontAwesomeIcon icon={faTrash} />
+                        <span>Delete job</span>
+                    </Link>
+                </Button>
+                <Button>
+                    <Link to={`/home/editJob/${job_id}`}>
+                        <FontAwesomeIcon icon={faEdit} />
+                        <span>Edit job</span>
+                    </Link>
+                </Button>
+            </>)
+    }
+
+    const contractSelectPopup = (contract_id) => {
+        return (
+            <>
+                <Button>
+                    <Link to={`/home/deleteContract/${contract_id}`}>
+                        <FontAwesomeIcon icon={faTrash} />
+                        <span>Delete contract</span>
+                    </Link>
+                </Button>
+                <Button>
+                    <Link to={`/home/editContract/${contract_id}`}>
+                        <FontAwesomeIcon icon={faEdit} />
+                        <span>Edit contract</span>
+                    </Link>
+                </Button>
+            </>)
     }
 
     return (
         <>
-        <h3>Jobs Posted by You</h3>
-        <JobsTable filters={userJobsFilter} 
-            selectPopup={rowSelectPopup}
-            allowEdit={true} 
-            allowDelete={true}/>
-        <h3>Jobs Accepted By You</h3>
-        <JobsTable filters={userContractJobsFilter}/>
+            <h3>Jobs Posted by You</h3>
+            <JobsTable filters={userJobsFilter}
+                selectPopup={jobSelectPopup}
+                allowEdit={true}
+                allowDelete={true} />
+            <h3>Jobs Accepted By You</h3>
+            <ContractsTable filters={userContractJobsFilter}
+                selectPopup={contractSelectPopup} />
         </>
     )
 }

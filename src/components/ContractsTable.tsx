@@ -2,85 +2,35 @@ import { generateClient } from 'aws-amplify/data';
 import { DataGrid } from '@mui/x-data-grid';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import type { Schema } from '../../amplify/data/resource';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Pagination } from '@aws-amplify/ui-react';
-import { Link } from 'react-router-dom';
-import {
-    FormControlLabel,
-    TextField,
-    Box,
-    Button,
-    Checkbox,
-    styled,
-    Divider,
-    IconButton,
-    Table,
-    TableContainer,
-    TableBody,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableFooter,
-    TablePagination,
-} from '@mui/material';
 import { useEffect, useState } from 'react';
-import { format } from 'date-fns';
 
-type Job = Schema['Job']['type'];
-
-const FORMAT_DATE = (date_str) => {
-    return format(new Date(date_str), 'MM/dd/yy hh:mm aa');
-}
-const LIST_FORMATTER = (els) => {
-    return (els.length ? els.join(", ") : "None");
-}
-
-
-const JOB_COLUMNS: GridColDef<(typeof rows)[number]>[] = [
+const CONTRACT_COLUMNS: GridColDef<(typeof rows)[number]>[] = [
     {
-        field: 'title',
+        field: 'job',
+        valueGetter: (params) => params.title,
         headerName: 'Title',
         width: 150,
     },
     {
-        field: 'description',
+        field: 'job',
+        valueGetter: (params) => params.description,
         headerName: 'Description',
         width: 150,
     },
     {
-        field: 'requiredMaterials',
-        headerName: 'Materials',
-        width: 150,
-        valueFormatter: LIST_FORMATTER
-    },
-    {
-        field: 'colors',
-        headerName: 'Colors',
-        width: 150,
-        valueFormatter: LIST_FORMATTER
-    },
-    {
-        field: 'createdAt',
-        headerName: 'Date Posted',
-        width: 150,
-        valueFormatter: FORMAT_DATE
-    },
-    {
-        field: 'amountOffered',
-        headerName: 'Amount Offered',
+        field: 'status',
+        headerName: 'Status',
         width: 150,
     }
 ];
 
-export default function JobsTable(props) {
+export default function ContractsTable(props) {
     const filters = props.filters;
     const selectPopup = props.selectPopup;
-    const allowDelete = props.allowDelete ?? false;
-    const allowEdit = props.allowEdit ?? false;
     const client = generateClient<Schema>();
     const { user, signOut } = useAuthenticator((context) => [context.user]);
-    const [jobs, setJobs] = useState([]);
+    const [contracts, setContracts] = useState([]);
     const [pageTokens, setPageTokens] = useState([]);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
@@ -88,23 +38,26 @@ export default function JobsTable(props) {
 
     const fetchData = async (init, nextPage) => {
         if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
-            const { data: new_jobs, nextToken } = await client.models.Job.list({
-                filter: filters,
+
+            const { data: new_contracts, nextToken } = await client.models.Contract.list({
+                // filter: filters,
+                selectionSet: ['id', 'status', 'job.*'],
                 limit: 30,
                 nextToken: pageTokens[pageTokens.length - 1],
                 authMode: 'userPool'
             });
 
-            console.log(new_jobs);
+            // console.log('CONTRACTS:');
+            // console.log(new_contracts[0].job)
 
             if (!nextToken) {
                 setHasMorePages(false);
             }
             setPageTokens(init ? [nextToken] : [...pageTokens, nextToken]);
             if (init) {
-                setJobs(new_jobs.length > 0 ? [new_jobs] : []);
-            } else if (new_jobs.length > 0) {
-                setJobs([...jobs, new_jobs]);
+                setContracts(new_contracts.length > 0 ? [new_contracts] : []);
+            } else if (new_contracts.length > 0) {
+                setContracts([...contracts, new_contracts]);
             }
         }
 
@@ -118,8 +71,8 @@ export default function JobsTable(props) {
 
 
 
-    if (jobs.length == 0) {
-        return (<p>No jobs matching criteria.</p>);
+    if (contracts.length == 0) {
+        return (<p>No jobs Accepted.</p>);
     }
 
     const handleSelectionChange = (selection) => {
@@ -131,8 +84,8 @@ export default function JobsTable(props) {
             <DataGrid
                 checkboxSelection
                 disableMultipleRowSelection={true}
-                columns={JOB_COLUMNS}
-                rows={jobs[currentPageIndex - 1]}
+                columns={CONTRACT_COLUMNS}
+                rows={contracts[currentPageIndex - 1]}
                 onRowSelectionModelChange={handleSelectionChange}
             />
             {selectedRows.length > 0 && selectPopup(selectedRows[0])}
