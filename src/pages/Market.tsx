@@ -291,6 +291,9 @@ export default function Market({ user }: { user: AuthUser }) {
                 gt: formData.minPrice,
                 lt: formData.maxPrice
             },
+            contractID: {
+                attributeExists: false
+            }
         }
 
         let colors = [];

@@ -13,7 +13,8 @@ const schema = a.schema({
       amountOffered: a.float(),
       requiredMaterials: a.ref("RequiredMaterials").array(),
       colors: a.ref("Colors").array(),
-      contract: a.hasOne('Contract', 'jobID')
+      contract: a.belongsTo('Contract', 'contractID'),
+      contractID: a.id()
     })
     .authorization((allow) => [
       allow.ownerDefinedIn("submitter"),
@@ -21,7 +22,7 @@ const schema = a.schema({
   Contract: a
     .model({
       jobID: a.id().required(),
-      job: a.belongsTo('Job', 'jobID'),
+      job: a.hasOne('Job', 'contractID'),
       contractor: a.string().required(),
       status: a.ref("ContractStatus"),
     })
