@@ -17,6 +17,8 @@ import { styled } from '@mui/material/styles';
 import { AuthUser } from 'aws-amplify/auth';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
+import { uploadData } from 'aws-amplify/storage';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -35,14 +37,14 @@ interface FormData {
     title: string;
     description: string;
     amt_offered: number;
-}
+};
 
 type CreateJobResult = {
     success: boolean;
     message: string;
 };
 
-async function CreateJob({ user, formData }: { user: AuthUser, formData: FormData }): Promise<CreateJobResult> {
+async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formData: FormData, modelFile : File }): Promise<CreateJobResult> {
     let colors = [];
     let color, val;
     for([color, val] of Object.entries(formData.colors)) {
@@ -60,7 +62,14 @@ async function CreateJob({ user, formData }: { user: AuthUser, formData: FormDat
     }
  
     const client = generateClient<Schema>();
+
+    if(modelFile == null) {
+        return {success: false, message: 'File not found'};
+    }
+
+    const uniqueId = "" + uuidv4() + "-" + Date.now(); + "-" + modelFile.name;
     let {data: new_job, errors} = await client.models.Job.create({
+        jobID: uniqueId,
         submitter: user.userId,
         title: formData.title,
         description: formData.description,
@@ -70,6 +79,15 @@ async function CreateJob({ user, formData }: { user: AuthUser, formData: FormDat
     });
     if(errors) {
         return { success: false, message: 'Failed to create job.' };
+    } else {
+        try {
+            const response = await uploadData({
+                path: `models/${user.userId}/${uniqueId}`,
+                data: modelFile,
+            });
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
     }
     return { success: true, message: 'Job created successfully.' };
 }
@@ -125,9 +143,15 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
         });
     };
 
+    
+    const [modelFile, setFile] = React.useState();
+    const handleFileChange = (event: any) => {
+        setFile(event.target.files[0]);
+    };
+
     const handleCreateJob = async() => {
         setShowPopUp(false);
-        const result = await CreateJob({ user, formData });
+        const result = await CreateJob({ user, formData, modelFile });
         setShowAlert(true);
         setAlertType(result.success ? "success" : "error")
         setShowAlertMessage(result.message);
@@ -223,6 +247,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                             <Button
                                 component="label"
                                 variant="contained"
+                                onChange={handleFileChange}
                                 sx={{margin: '10px 0 10px 0', display: 'flex'}}
                                 startIcon={<CloudUploadIcon />}
                             >
