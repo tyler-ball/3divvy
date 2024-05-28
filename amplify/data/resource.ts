@@ -7,6 +7,7 @@ const schema = a.schema({
   ContractStatus: a.enum(["Accepted", "Printing", "Shipped"]),
   Job: a
     .model({
+      jobID: a.string().required(),
       submitter: a.string().required(),
       title: a.string(),
       description: a.string(),
