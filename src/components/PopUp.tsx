@@ -63,11 +63,11 @@ async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formDa
  
     const client = generateClient<Schema>();
 
-    if(modelFile == null) {
-        return {success: false, message: 'File not found'};
+    if(!modelFile) {
+        return {success: false, message: 'Could not find selected file.'};
     }
-
-    const uniqueId = "" + uuidv4() + "-" + Date.now(); + "-" + modelFile.name;
+    
+    const uniqueId = "" + uuidv4() + "-" + Date.now() + "-" + modelFile.name;
     let {data: new_job, errors} = await client.models.Job.create({
         jobID: uniqueId,
         submitter: user.userId,
@@ -143,15 +143,18 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
         });
     };
 
-    
-    const [modelFile, setFile] = React.useState();
-    const handleFileChange = (event: any) => {
-        setFile(event.target.files[0]);
+    const [modelFile, setFile] = useState<File | null>(null);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            setFile(event.target.files[0]);
+            //setError(null); // Reset error state on new file selection
+            //setSuccessMessage(null); // Reset success message on new file selection
+        }
     };
 
     const handleCreateJob = async() => {
         setShowPopUp(false);
-        const result = await CreateJob({ user, formData, modelFile });
+        const result = await CreateJob({ user, formData, modelFile});
         setShowAlert(true);
         setAlertType(result.success ? "success" : "error")
         setShowAlertMessage(result.message);
@@ -247,12 +250,11 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                             <Button
                                 component="label"
                                 variant="contained"
-                                onChange={handleFileChange}
                                 sx={{margin: '10px 0 10px 0', display: 'flex'}}
                                 startIcon={<CloudUploadIcon />}
                             >
                                 Upload file
-                                <VisuallyHiddenInput type="file" />
+                                <VisuallyHiddenInput type="file" onChange={handleFileChange}/>
                             </Button>
                         </Grid>
                     </Grid>
