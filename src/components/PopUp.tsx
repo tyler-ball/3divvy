@@ -160,7 +160,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
         setShowAlertMessage(result.message);
     }
 
-    const isDisabled = !formData.title || !formData.description || formData.amt_offered <= 0;
+    const isDisabled = !formData.title || !formData.description || formData.amt_offered <= 0 || !modelFile;
 
     return (
         <>
@@ -256,6 +256,9 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 Upload file
                                 <VisuallyHiddenInput type="file" onChange={handleFileChange}/>
                             </Button>
+                            {modelFile && (
+                                <p>Selected: {modelFile.name}</p>
+                            )}
                         </Grid>
                     </Grid>
                 </DialogContent>
