@@ -1,20 +1,18 @@
 import { generateClient } from 'aws-amplify/data';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import type { Schema } from '../../amplify/data/resource';
 import { Pagination } from '@aws-amplify/ui-react';
 import { useEffect, useState } from 'react';
 
-const CONTRACT_COLUMNS: GridColDef<(typeof rows)[number]>[] = [
+const CONTRACT_COLUMNS: GridColDef[] = [
     {
-        field: 'job',
-        valueGetter: (params) => params.title,
+        field: 'job_title',
         headerName: 'Title',
         width: 150,
     },
     {
-        field: 'job',
-        valueGetter: (params) => params.description,
+        field: 'job_description',
         headerName: 'Description',
         width: 150,
     },
@@ -47,17 +45,23 @@ export default function ContractsTable(props) {
                 authMode: 'userPool'
             });
 
-            // console.log('CONTRACTS:');
-            // console.log(new_contracts[0].job)
+            const new_contracts_flattened = new_contracts.map((contract) => ({
+                ...contract,
+                job_title: contract?.job?.title,
+                job_description: contract?.job?.description
+            }))
+
+            console.log('CONTRACTS:');
+            console.log(new_contracts[0]?.job)
 
             if (!nextToken) {
                 setHasMorePages(false);
             }
             setPageTokens(init ? [nextToken] : [...pageTokens, nextToken]);
             if (init) {
-                setContracts(new_contracts.length > 0 ? [new_contracts] : []);
-            } else if (new_contracts.length > 0) {
-                setContracts([...contracts, new_contracts]);
+                setContracts(new_contracts_flattened.length > 0 ? [new_contracts_flattened] : []);
+            } else if (new_contracts_flattened.length > 0) {
+                setContracts([...contracts, new_contracts_flattened]);
             }
         }
 
