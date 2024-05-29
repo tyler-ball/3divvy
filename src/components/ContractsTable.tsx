@@ -1,9 +1,11 @@
 import { generateClient } from 'aws-amplify/data';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import type { Schema } from '../../amplify/data/resource';
 import { Pagination } from '@aws-amplify/ui-react';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+import { getUrl } from 'aws-amplify/storage';
+import { Button } from '@aws-amplify/ui-react';
 
 const CONTRACT_COLUMNS: GridColDef[] = [
     {
@@ -20,8 +22,34 @@ const CONTRACT_COLUMNS: GridColDef[] = [
         field: 'status',
         headerName: 'Status',
         width: 150,
+    },
+    {
+        field: 'model_file_path',
+        headerName: 'Download Model',
+        renderCell: downloadModelFile,
+        width: 150,
     }
 ];
+
+function downloadModelFile(params: GridRenderCellParams<any, String>): ReactElement {
+    if (params.value) {
+        return (
+            <Button onClick={() =>
+                getUrl({
+                    path: params.value,
+                    options: {
+                        validateObjectExistence: true,
+                    }
+                }).then((modelFile) => {
+                    console.log(modelFile.url);
+                    window.open(modelFile.url, '_blank');
+                })
+            }>Download</Button>
+        );
+    } else {
+        return (<>Missing</>);
+    }
+}
 
 export default function ContractsTable(props) {
     const filters = props.filters;
@@ -48,7 +76,8 @@ export default function ContractsTable(props) {
             const new_contracts_flattened = new_contracts.map((contract) => ({
                 ...contract,
                 job_title: contract?.job?.title,
-                job_description: contract?.job?.description
+                job_description: contract?.job?.description,
+                model_file_path: contract?.job?.modelFilePath
             }))
 
             console.log('CONTRACTS:');

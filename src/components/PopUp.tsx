@@ -44,32 +44,31 @@ type CreateJobResult = {
     message: string;
 };
 
-async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formData: FormData, modelFile : File }): Promise<CreateJobResult> {
+async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formData: FormData, modelFile: File }): Promise<CreateJobResult> {
     let colors = [];
     let color, val;
-    for([color, val] of Object.entries(formData.colors)) {
-        if(val) {
+    for ([color, val] of Object.entries(formData.colors)) {
+        if (val) {
             colors.push(color);
         }
     }
- 
+
     let materials = [];
     let material;
-    for([material, val] of Object.entries(formData.materials)) {
-        if(val) {
+    for ([material, val] of Object.entries(formData.materials)) {
+        if (val) {
             materials.push(material);
         }
     }
- 
+
     const client = generateClient<Schema>();
 
-    if(!modelFile) {
-        return {success: false, message: 'Could not find selected file.'};
+    if (!modelFile) {
+        return { success: false, message: 'Could not find selected file.' };
     }
-    
-    const uniqueId = "" + uuidv4() + "-" + Date.now() + "-" + modelFile.name;
-    let {data: new_job, errors} = await client.models.Job.create({
-        jobID: uniqueId,
+
+
+    let { data: new_job, errors: err1 } = await client.models.Job.create({
         submitter: user.userId,
         title: formData.title,
         description: formData.description,
@@ -77,32 +76,42 @@ async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formDa
         colors: colors,
         requiredMaterials: materials
     });
-    if(errors) {
+    if (err1) {
         return { success: false, message: 'Failed to create job.' };
-    } else {
-        try {
-            const response = await uploadData({
-                path: `models/${user.userId}/${uniqueId}`,
-                data: modelFile,
-            });
-        } catch (error) {
-            console.error('Error uploading file:', error);
-        }
     }
+    const uniqueId = Date.now() + "-" + modelFile.name;
+    const modelFilePath = `models/${user.userId}/${new_job.id}/${uniqueId}`;
+    try {
+        const response = await uploadData({
+            path: `models/${user.userId}/${new_job.id}/${uniqueId}`,
+            data: modelFile,
+        });
+    } catch (error) {
+        return { success: false, message: 'Error uploading file: ' + error };
+    }
+
+    let { data: new_job_with_path, errors: err2 } = await client.models.Job.update({
+        id: new_job.id,
+        modelFilePath: modelFilePath
+    });
+    if (err2) {
+        return { success: false, message: 'Failed to update job with model path.' };
+    }
+
     return { success: true, message: 'Job created successfully.' };
 }
 
 type PopUpProps = {
     showPopUp: boolean,
     setShowPopUp: Dispatch<React.SetStateAction<boolean>>,
-    setShowAlert:Dispatch<React.SetStateAction<boolean>>,
+    setShowAlert: Dispatch<React.SetStateAction<boolean>>,
     setShowAlertMessage: Dispatch<React.SetStateAction<string>>,
     setAlertType: Dispatch<React.SetStateAction<string>>,
     user: AuthUser,
 }
 
 export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAlertMessage, setAlertType, user }: PopUpProps) {
-    
+
     const [formData, setFormData] = useState({
         "title": "",
         "description": "",
@@ -152,9 +161,9 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
         }
     };
 
-    const handleCreateJob = async() => {
+    const handleCreateJob = async () => {
         setShowPopUp(false);
-        const result = await CreateJob({ user, formData, modelFile});
+        const result = await CreateJob({ user, formData, modelFile });
         setShowAlert(true);
         setAlertType(result.success ? "success" : "error")
         setShowAlertMessage(result.message);
@@ -164,7 +173,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
 
     return (
         <>
-            <Dialog 
+            <Dialog
                 open={showPopUp}
                 maxWidth="xs"
             >
@@ -174,7 +183,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         onClick={() => setShowPopUp(false)}
                         variant="text"
                         color="error"
-                        sx={{position: 'absolute', right: '10px'}}
+                        sx={{ position: 'absolute', right: '10px' }}
                     >
                         X
                     </Button>
@@ -185,7 +194,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         justifyContent="center"
                         alignItems="center"
                     >
-                        <Grid item sx={{width: '100%'}}>
+                        <Grid item sx={{ width: '100%' }}>
                             <TextField
                                 required
                                 variant="outlined"
@@ -197,7 +206,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item sx={{width: '100%', padding: '15px 0 15px 0'}}>
+                        <Grid item sx={{ width: '100%', padding: '15px 0 15px 0' }}>
                             <TextField
                                 required
                                 variant="outlined"
@@ -210,7 +219,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 onChange={handleChange}
                             />
                         </Grid>
-                        <Grid item sx={{width: '100%'}}>
+                        <Grid item sx={{ width: '100%' }}>
                             <TextField
                                 required
                                 variant="outlined"
@@ -226,35 +235,35 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                         <div className='material'>
                             <label>Material</label>
                             <Box className='filters'>
-                            {Object.keys(formData.materials).map((mat) => (
-                                <FormControlLabel control={<Checkbox 
-                                    checked={ formData.materials[mat] }
-                                    onChange={ (e) => { onMaterialCheck(mat, e) } }
-                                />} label={mat} />
-                            ))}
+                                {Object.keys(formData.materials).map((mat) => (
+                                    <FormControlLabel control={<Checkbox
+                                        checked={formData.materials[mat]}
+                                        onChange={(e) => { onMaterialCheck(mat, e) }}
+                                    />} label={mat} />
+                                ))}
                             </Box>
                         </div>
                         <div className='color'>
                             <label>Color</label>
                             <Box className='filters'>
                                 {Object.keys(formData.colors).map((col) => (
-                                    <FormControlLabel control={<Checkbox 
-                                        checked={ formData.colors[col] }
-                                        onChange={ (e) => { onColorCheck(col, e) } }
+                                    <FormControlLabel control={<Checkbox
+                                        checked={formData.colors[col]}
+                                        onChange={(e) => { onColorCheck(col, e) }}
                                     />} label={col} />
                                 ))}
                             </Box>
                         </div>
 
-                        <Grid item sx={{width: '100%'}}>
+                        <Grid item sx={{ width: '100%' }}>
                             <Button
                                 component="label"
                                 variant="contained"
-                                sx={{margin: '10px 0 10px 0', display: 'flex'}}
+                                sx={{ margin: '10px 0 10px 0', display: 'flex' }}
                                 startIcon={<CloudUploadIcon />}
                             >
                                 Upload file
-                                <VisuallyHiddenInput type="file" onChange={handleFileChange}/>
+                                <VisuallyHiddenInput type="file" onChange={handleFileChange} />
                             </Button>
                             {modelFile && (
                                 <p>Selected: {modelFile.name}</p>
@@ -263,7 +272,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                     </Grid>
                 </DialogContent>
                 <DialogActions
-                    sx={{display: 'flex', justifyContent: 'center'}}
+                    sx={{ display: 'flex', justifyContent: 'center' }}
                 >
                     <Button
                         onClick={handleCreateJob}
