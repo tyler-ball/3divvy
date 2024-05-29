@@ -123,6 +123,7 @@ export function DeleteJob(props) {
     }
 
     const deleteJob = async () => {
+        // TODO clean up uploaded model files
         const { data: new_job, errors } = await client.models.Job.delete({
             id: job_id
         });
