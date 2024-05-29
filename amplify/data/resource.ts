@@ -5,6 +5,7 @@ const schema = a.schema({
   RequiredMaterials: a.enum(["Plastic", "Resin", "CarbonFiber"]),
   Colors: a.enum(["Red", "White", "Black", "Blue", "Transparent"]),
   ContractStatus: a.enum(["Accepted", "Printing", "Shipped"]),
+  Paid: a.enum(["Unpaid", "Paid"]),
   Job: a
     .model({
       submitter: a.string().required(),
@@ -25,6 +26,7 @@ const schema = a.schema({
       job: a.belongsTo('Job', 'jobID'),
       contractor: a.string().required(),
       status: a.ref("ContractStatus"),
+      paid: a.ref("Paid")
     })
     .authorization((allow) => [allow.ownerDefinedIn("contractor")]),
   UserProfile: a

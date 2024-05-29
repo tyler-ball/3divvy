@@ -85,6 +85,7 @@ export default function JobsTable(props) {
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     const [hasMorePages, setHasMorePages] = useState(true);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [jobsByID, setJobsByID] = useState({});
 
     const fetchData = async (init, nextPage) => {
         if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
@@ -92,10 +93,10 @@ export default function JobsTable(props) {
                 filter: filters,
                 limit: 30,
                 nextToken: pageTokens[pageTokens.length - 1],
-                authMode: 'userPool'
+                authMode: 'userPool',
+                selectionSet: ['id', 'createdAt', 'submitter', 'title', 'description', 'amountOffered', 'requiredMaterials', 'colors', 'contract.*']
             });
 
-            console.log(new_jobs);
 
             if (!nextToken) {
                 setHasMorePages(false);
@@ -106,6 +107,13 @@ export default function JobsTable(props) {
             } else if (new_jobs.length > 0) {
                 setJobs([...jobs, new_jobs]);
             }
+
+            let jobs_dict = init ? {} : JSON.parse(JSON.stringify(jobsByID));
+            for(let job of new_jobs) {
+                jobs_dict[job.id] = job;
+            }
+
+            setJobsByID(jobs_dict);
         }
 
         if (nextPage) {
@@ -135,7 +143,7 @@ export default function JobsTable(props) {
                 rows={jobs[currentPageIndex - 1]}
                 onRowSelectionModelChange={handleSelectionChange}
             />
-            {selectedRows.length > 0 && selectPopup(selectedRows[0])}
+            {selectedRows.length > 0 && selectPopup(selectedRows[0], jobsByID[selectedRows[0]])}
             <Pagination
                 currentPage={currentPageIndex}
                 totalPages={pageTokens.length}
