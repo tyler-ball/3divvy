@@ -45,6 +45,7 @@ type CreateJobResult = {
 };
 
 async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formData: FormData, modelFile: File }): Promise<CreateJobResult> {
+    console.log(modelFile);
     let colors = [];
     let color, val;
     for ([color, val] of Object.entries(formData.colors)) {
@@ -74,7 +75,8 @@ async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formDa
         description: formData.description,
         amountOffered: formData.amt_offered,
         colors: colors,
-        requiredMaterials: materials
+        requiredMaterials: materials,
+        modelSize: modelFile.size
     });
     if (err1) {
         return { success: false, message: 'Failed to create job.' };
@@ -84,7 +86,7 @@ async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formDa
     try {
         const response = await uploadData({
             path: `models/${user.userId}/${new_job.id}/${uniqueId}`,
-            data: modelFile,
+            data: modelFile
         });
     } catch (error) {
         return { success: false, message: 'Error uploading file: ' + error };

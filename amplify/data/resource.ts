@@ -15,6 +15,7 @@ const schema = a.schema({
       requiredMaterials: a.ref("RequiredMaterials").array(),
       colors: a.ref("Colors").array(),
       modelFilePath: a.string(),
+      modelSize: a.integer(),
       contract: a.hasOne('Contract', 'jobID')
     })
     .authorization((allow) => [
