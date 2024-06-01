@@ -132,6 +132,36 @@ const FilterBar: React.FC<FilterBarProps> = (props) => {
                     />
                 </Box>
             </div>
+            <div className='max-size'>
+                <Box>
+                    <TextField
+                        id="outlined-number"
+                        label="Min Model Size (MB)"
+                        type="number"
+                        size="small"
+                        value={formData.minModelSize}
+                        onChange={(e) => { handleNumericChange('minModelSize', e) }}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </Box>
+            </div>
+            <div className='max-size'>
+                <Box>
+                    <TextField
+                        id="outlined-number"
+                        label="Max Model Size (MB)"
+                        type="number"
+                        size="small"
+                        value={formData.maxModelSize}
+                        onChange={(e) => { handleNumericChange('maxModelSize', e) }}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                    />
+                </Box>
+            </div>
             <ColorButton variant="outlined" onClick={submitCallback}>Apply Filter</ColorButton>
             <p>----- OR ------</p>
             <ColorButton variant="outlined" onClick={() => setShowPopUp(true)}>Create New Job</ColorButton>
@@ -268,6 +298,8 @@ export default function Market({ user }: { user: AuthUser }) {
     let [formData, setFormData] = useState({
         'minPrice': 0,
         'maxPrice': 100,
+        'minModelSize': 0,
+        'maxModelSize': 100,
         'colors': new Set(),
         'materials': {
             'Plastic': false,
@@ -286,11 +318,16 @@ export default function Market({ user }: { user: AuthUser }) {
     let [filters, setFilters] = useState({});
 
     const submitCallback = async () => {
+        const BYTES_PER_MB = 1024 * 1024;
         let new_filter = {
             amountOffered: {
                 gt: formData.minPrice,
                 lt: formData.maxPrice
             },
+            modelSize: {
+                gt: formData.minModelSize * BYTES_PER_MB,
+                lt: formData.maxModelSize * BYTES_PER_MB
+            }
         }
 
         let colors = [];
@@ -333,13 +370,12 @@ export default function Market({ user }: { user: AuthUser }) {
         });
 
         if ('errors' in resp) {
-            console.log("FAILED");
-            // do sth about it.
+            setAlertType('error')
+            setShowAlertMessage('Error creating the contract')
+            setShowAlert(true)
         }
 
         let { data: contracts, errs } = await client.models.Contract.list();
-        console.log("CONTRACTS");
-        console.log(contracts);
     }
 
     const rowSelectPopup = (job_id) => {

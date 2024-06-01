@@ -36,6 +36,11 @@ const LIST_FORMATTER = (els) => {
     return (els.length ? els.join(", ") : "None");
 }
 
+const MB_FORMATTER = (bytes) => {
+    let mb = (bytes / (1024 * 1024));
+    return mb.toFixed(2).toString() + " MB";
+}
+
 
 const JOB_COLUMNS: GridColDef<(typeof rows)[number]>[] = [
     {
@@ -70,6 +75,12 @@ const JOB_COLUMNS: GridColDef<(typeof rows)[number]>[] = [
         field: 'amountOffered',
         headerName: 'Amount Offered',
         width: 150,
+    },
+    {
+        field: 'modelSize',
+        headerName: 'Model Size',
+        width: 150,
+        valueFormatter: MB_FORMATTER
     }
 ];
 
@@ -94,8 +105,22 @@ export default function JobsTable(props) {
                 limit: 30,
                 nextToken: pageTokens[pageTokens.length - 1],
                 authMode: 'userPool',
-                selectionSet: ['id', 'createdAt', 'submitter', 'title', 'description', 'amountOffered', 'requiredMaterials', 'colors', 'contract.*']
+                selectionSet: ['id', 
+                    'createdAt', 
+                    'submitter', 
+                    'title', 
+                    'description', 
+                    'amountOffered', 
+                    'requiredMaterials', 
+                    'colors', 
+                    'modelSize',
+                    'contract.*']
             });
+
+            console.log("JOBS TABLE");
+            console.log(new_jobs[0]);
+            console.log(new_jobs[1]);
+            console.log(new_jobs[2]);
 
 
             if (!nextToken) {
