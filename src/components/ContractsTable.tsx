@@ -28,6 +28,11 @@ const CONTRACT_COLUMNS: GridColDef[] = [
         headerName: 'Download Model',
         renderCell: downloadModelFile,
         width: 150,
+    },
+    {
+        field: 'paid',
+        headerName: 'Payment Status',
+        width: 150,
     }
 ];
 
@@ -52,7 +57,6 @@ function downloadModelFile(params: GridRenderCellParams<any, String>): ReactElem
 }
 
 export default function ContractsTable(props) {
-    const filters = props.filters;
     const selectPopup = props.selectPopup;
     const client = generateClient<Schema>();
     const { user, signOut } = useAuthenticator((context) => [context.user]);
@@ -66,12 +70,17 @@ export default function ContractsTable(props) {
         if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
 
             const { data: new_contracts, nextToken } = await client.models.Contract.list({
-                // filter: filters,
-                selectionSet: ['id', 'status', 'job.*'],
+                filter: {
+                    contractor: { eq: user.userId }
+                },
+                selectionSet: ['id', 'status', 'paid', 'job.*'],
                 limit: 30,
                 nextToken: pageTokens[pageTokens.length - 1],
                 authMode: 'userPool'
             });
+
+            console.log('CONTRACTS:');
+            console.log(new_contracts);
 
             const new_contracts_flattened = new_contracts.map((contract) => ({
                 ...contract,

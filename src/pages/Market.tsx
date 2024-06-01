@@ -328,7 +328,8 @@ export default function Market({ user }: { user: AuthUser }) {
         let resp = await client.models.Contract.create({
             jobID: job_id,
             contractor: user.userId,
-            status: 'Accepted'
+            status: 'Accepted',
+            paid: 'Unpaid'
         });
 
         if ('errors' in resp) {
