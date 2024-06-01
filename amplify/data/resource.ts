@@ -28,7 +28,9 @@ const schema = a.schema({
       status: a.ref("ContractStatus"),
       paid: a.ref("Paid")
     })
-    .authorization((allow) => [allow.ownerDefinedIn("contractor")]),
+    .authorization((allow) => [
+      allow.ownerDefinedIn("contractor"),
+      allow.authenticated().to(["read", "update"])]),
   UserProfile: a
     .model({
       profileOwner: a.string().required(),

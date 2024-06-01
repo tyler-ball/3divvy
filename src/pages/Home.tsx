@@ -231,11 +231,12 @@ export function PaymentInfo() {
     const [cvc, setCvc] = useState('');
     const [expDate, setExpDate] = useState('');
     const [err, setErr] = useState(false);
+    const client = generateClient<Schema>();
 
     const submitPayment = async () => {
         let apiRetCode = 200;
 
-        if(apiRetCode != 200) {
+        if (apiRetCode != 200) {
             setErr(true);
             return;
         }
@@ -244,38 +245,45 @@ export function PaymentInfo() {
             id: job_id
         });
         setErr(false);
-        
-        if(get_errors) {
+
+        if (get_errors) {
             setErr(true);
             return;
         }
 
-        let contract = job.contract();
-        contract.paid = "Paid";
-        const { data: new_con, upd_errors } = 
-            await client.models.Contract.update(contract);
+        const { data: contract, con_errors } = await job.contract();
+        console.log("CONTRACT TO PAY");
+        console.log(contract)
+        const { data: new_con, upd_errors } =
+            await client.models.Contract.update({ id: contract.id, paid: "Paid" });
+
+        if (upd_errors) {
+            console.log(upd_errors);
+            setErr(true);
+            return;
+        }
 
         navigate("/home");
     }
 
     return (<>
-        <div class="min-size">
-        <Box>
-        <TextField type="text" label={"Card No."}
-            value={cardNo} onChange={(e) => setCardNo(e.target.value)}/>
-        </Box>
+        <div className="min-size">
+            <Box>
+                <TextField type="text" label={"Card No."}
+                    value={cardNo} onChange={(e) => setCardNo(e.target.value)} />
+            </Box>
         </div>
-        <div class="min-size">
-        <Box>
-        <TextField type="text" label={"CVC"} 
-            value={cvc} onChange={(e) => setCvc(e.target.value)}/>
-        </Box>
+        <div className="min-size">
+            <Box>
+                <TextField type="text" label={"CVC"}
+                    value={cvc} onChange={(e) => setCvc(e.target.value)} />
+            </Box>
         </div>
-        <div class="min-size">
-        <Box>
-        <TextField type="text" label={"Expiration Date"}
-            value={expDate} onChange={(e) => setExpDate(e.target.value)}/>
-        </Box>
+        <div className="min-size">
+            <Box>
+                <TextField type="text" label={"Expiration Date"}
+                    value={expDate} onChange={(e) => setExpDate(e.target.value)} />
+            </Box>
         </div>
         {err && <p>Error with payment info. Please resubmit</p>}
         <Button onClick={submitPayment}>Submit</Button>
@@ -302,13 +310,13 @@ export default function () {
                         <span>Edit job</span>
                     </Link>
                 </Button>
-                { job.contract && job.contract.status == "Printing" &&
-                <Button>
-                    <Link to={`/home/payJob/${job_id}`}>
-                        <FontAwesomeIcon icon={faEdit} />
-                        <span>Submit Payment</span>
-                    </Link>
-                </Button>
+                {job.contract && job.contract.status == "Printing" &&
+                    <Button>
+                        <Link to={`/home/payJob/${job_id}`}>
+                            <FontAwesomeIcon icon={faEdit} />
+                            <span>Submit Payment</span>
+                        </Link>
+                    </Button>
                 }
             </>)
     }
