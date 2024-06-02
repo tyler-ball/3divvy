@@ -30,6 +30,7 @@ import Popup from '../components/PopUp';
 import Alert from '@mui/material/Alert';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
+import { useNavigate } from 'react-router-dom';
 
 import '../styles/marketStyle.css';
 
@@ -316,6 +317,7 @@ export default function Market({ user }: { user: AuthUser }) {
     });
 
     let [filters, setFilters] = useState({});
+    const navigate = useNavigate();
 
     const submitCallback = async () => {
         const BYTES_PER_MB = 1024 * 1024;
@@ -327,6 +329,9 @@ export default function Market({ user }: { user: AuthUser }) {
             modelSize: {
                 gt: formData.minModelSize * BYTES_PER_MB,
                 lt: formData.maxModelSize * BYTES_PER_MB
+            },
+            hasContract: {
+                eq: false
             }
         }
 
@@ -373,9 +378,22 @@ export default function Market({ user }: { user: AuthUser }) {
             setAlertType('error')
             setShowAlertMessage('Error creating the contract')
             setShowAlert(true)
+            return;
         }
 
-        let { data: contracts, errs } = await client.models.Contract.list();
+        let job_upd_resp = await client.models.Job.update({
+            id: job_id,
+            hasContract: true
+        })
+
+        if ('errors' in job_upd_resp) {
+            setAlertType('error')
+            setShowAlertMessage('Error updating job status')
+            setShowAlert(true)
+            return;
+        }
+        navigate("/home");
+
     }
 
     const rowSelectPopup = (job_id) => {

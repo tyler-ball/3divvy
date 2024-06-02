@@ -16,7 +16,8 @@ const schema = a.schema({
       colors: a.ref("Colors").array(),
       modelFilePath: a.string(),
       modelSize: a.integer(),
-      contract: a.hasOne('Contract', 'jobID')
+      contract: a.hasOne('Contract', 'jobID'),
+      hasContract: a.boolean().default(false)
     })
     .authorization((allow) => [
       allow.ownerDefinedIn("submitter"),
