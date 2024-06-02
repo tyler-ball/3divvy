@@ -15,9 +15,11 @@ export const getContract = /* GraphQL */ `query GetContract($id: ID!) {
     id
     job {
       amountOffered
+      colors
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -25,6 +27,8 @@ export const getContract = /* GraphQL */ `query GetContract($id: ID!) {
       __typename
     }
     jobID
+    paid
+    status
     updatedAt
     __typename
   }
@@ -36,17 +40,21 @@ export const getContract = /* GraphQL */ `query GetContract($id: ID!) {
 export const getJob = /* GraphQL */ `query GetJob($id: ID!) {
   getJob(id: $id) {
     amountOffered
+    colors
     contract {
       contractor
       createdAt
       id
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
     createdAt
     description
     id
+    modelFilePath
     requiredMaterials
     submitter
     title
@@ -57,7 +65,6 @@ export const getJob = /* GraphQL */ `query GetJob($id: ID!) {
 ` as GeneratedQuery<APITypes.GetJobQueryVariables, APITypes.GetJobQuery>;
 export const getUserProfile = /* GraphQL */ `query GetUserProfile($id: ID!) {
   getUserProfile(id: $id) {
-    ccNum
     createdAt
     email
     id
@@ -82,6 +89,8 @@ export const listContracts = /* GraphQL */ `query ListContracts(
       createdAt
       id
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -97,9 +106,11 @@ export const listJobs = /* GraphQL */ `query ListJobs($filter: ModelJobFilterInp
   listJobs(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       amountOffered
+      colors
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -118,7 +129,6 @@ export const listUserProfiles = /* GraphQL */ `query ListUserProfiles(
 ) {
   listUserProfiles(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
-      ccNum
       createdAt
       email
       id

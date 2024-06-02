@@ -20,13 +20,11 @@ export declare type UserProfileUpdateFormInputValues = {
     profileOwner?: string;
     email?: string;
     shippingAddress?: string;
-    ccNum?: string;
 };
 export declare type UserProfileUpdateFormValidationValues = {
     profileOwner?: ValidationFunction<string>;
     email?: ValidationFunction<string>;
     shippingAddress?: ValidationFunction<string>;
-    ccNum?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type UserProfileUpdateFormOverridesProps = {
@@ -34,7 +32,6 @@ export declare type UserProfileUpdateFormOverridesProps = {
     profileOwner?: PrimitiveOverrideProps<TextFieldProps>;
     email?: PrimitiveOverrideProps<TextFieldProps>;
     shippingAddress?: PrimitiveOverrideProps<TextFieldProps>;
-    ccNum?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type UserProfileUpdateFormProps = React.PropsWithChildren<{
     overrides?: UserProfileUpdateFormOverridesProps | undefined | null;

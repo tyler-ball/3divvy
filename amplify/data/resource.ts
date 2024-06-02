@@ -36,7 +36,6 @@ const schema = a.schema({
       profileOwner: a.string().required(),
       email: a.string().required(),
       shippingAddress: a.string(),
-      ccNum: a.string(),
     })
     .authorization((allow) => [allow.ownerDefinedIn("profileOwner")]),
 }).authorization((allow) => [allow.resource(postConfirmation)]);

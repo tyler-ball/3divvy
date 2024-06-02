@@ -13,9 +13,11 @@ export const createContract = /* GraphQL */ `
       id
       job {
         amountOffered
+        colors
         createdAt
         description
         id
+        modelFilePath
         requiredMaterials
         submitter
         title
@@ -23,6 +25,8 @@ export const createContract = /* GraphQL */ `
         __typename
       }
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -35,17 +39,21 @@ export const createJob = /* GraphQL */ `
   ) {
     createJob(condition: $condition, input: $input) {
       amountOffered
+      colors
       contract {
         contractor
         createdAt
         id
         jobID
+        paid
+        status
         updatedAt
         __typename
       }
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -60,7 +68,6 @@ export const createUserProfile = /* GraphQL */ `
     $input: CreateUserProfileInput!
   ) {
     createUserProfile(condition: $condition, input: $input) {
-      ccNum
       createdAt
       email
       id
@@ -82,9 +89,11 @@ export const deleteContract = /* GraphQL */ `
       id
       job {
         amountOffered
+        colors
         createdAt
         description
         id
+        modelFilePath
         requiredMaterials
         submitter
         title
@@ -92,6 +101,8 @@ export const deleteContract = /* GraphQL */ `
         __typename
       }
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -104,17 +115,21 @@ export const deleteJob = /* GraphQL */ `
   ) {
     deleteJob(condition: $condition, input: $input) {
       amountOffered
+      colors
       contract {
         contractor
         createdAt
         id
         jobID
+        paid
+        status
         updatedAt
         __typename
       }
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -129,7 +144,6 @@ export const deleteUserProfile = /* GraphQL */ `
     $input: DeleteUserProfileInput!
   ) {
     deleteUserProfile(condition: $condition, input: $input) {
-      ccNum
       createdAt
       email
       id
@@ -151,9 +165,11 @@ export const updateContract = /* GraphQL */ `
       id
       job {
         amountOffered
+        colors
         createdAt
         description
         id
+        modelFilePath
         requiredMaterials
         submitter
         title
@@ -161,6 +177,8 @@ export const updateContract = /* GraphQL */ `
         __typename
       }
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -173,17 +191,21 @@ export const updateJob = /* GraphQL */ `
   ) {
     updateJob(condition: $condition, input: $input) {
       amountOffered
+      colors
       contract {
         contractor
         createdAt
         id
         jobID
+        paid
+        status
         updatedAt
         __typename
       }
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -198,7 +220,6 @@ export const updateUserProfile = /* GraphQL */ `
     $input: UpdateUserProfileInput!
   ) {
     updateUserProfile(condition: $condition, input: $input) {
-      ccNum
       createdAt
       email
       id

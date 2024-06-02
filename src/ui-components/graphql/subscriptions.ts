@@ -13,9 +13,11 @@ export const onCreateContract = /* GraphQL */ `
       id
       job {
         amountOffered
+        colors
         createdAt
         description
         id
+        modelFilePath
         requiredMaterials
         submitter
         title
@@ -23,6 +25,8 @@ export const onCreateContract = /* GraphQL */ `
         __typename
       }
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -35,17 +39,21 @@ export const onCreateJob = /* GraphQL */ `
   ) {
     onCreateJob(filter: $filter, submitter: $submitter) {
       amountOffered
+      colors
       contract {
         contractor
         createdAt
         id
         jobID
+        paid
+        status
         updatedAt
         __typename
       }
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -60,7 +68,6 @@ export const onCreateUserProfile = /* GraphQL */ `
     $profileOwner: String
   ) {
     onCreateUserProfile(filter: $filter, profileOwner: $profileOwner) {
-      ccNum
       createdAt
       email
       id
@@ -82,9 +89,11 @@ export const onDeleteContract = /* GraphQL */ `
       id
       job {
         amountOffered
+        colors
         createdAt
         description
         id
+        modelFilePath
         requiredMaterials
         submitter
         title
@@ -92,6 +101,8 @@ export const onDeleteContract = /* GraphQL */ `
         __typename
       }
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -104,17 +115,21 @@ export const onDeleteJob = /* GraphQL */ `
   ) {
     onDeleteJob(filter: $filter, submitter: $submitter) {
       amountOffered
+      colors
       contract {
         contractor
         createdAt
         id
         jobID
+        paid
+        status
         updatedAt
         __typename
       }
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -129,7 +144,6 @@ export const onDeleteUserProfile = /* GraphQL */ `
     $profileOwner: String
   ) {
     onDeleteUserProfile(filter: $filter, profileOwner: $profileOwner) {
-      ccNum
       createdAt
       email
       id
@@ -151,9 +165,11 @@ export const onUpdateContract = /* GraphQL */ `
       id
       job {
         amountOffered
+        colors
         createdAt
         description
         id
+        modelFilePath
         requiredMaterials
         submitter
         title
@@ -161,6 +177,8 @@ export const onUpdateContract = /* GraphQL */ `
         __typename
       }
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
@@ -173,17 +191,21 @@ export const onUpdateJob = /* GraphQL */ `
   ) {
     onUpdateJob(filter: $filter, submitter: $submitter) {
       amountOffered
+      colors
       contract {
         contractor
         createdAt
         id
         jobID
+        paid
+        status
         updatedAt
         __typename
       }
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -198,7 +220,6 @@ export const onUpdateUserProfile = /* GraphQL */ `
     $profileOwner: String
   ) {
     onUpdateUserProfile(filter: $filter, profileOwner: $profileOwner) {
-      ccNum
       createdAt
       email
       id

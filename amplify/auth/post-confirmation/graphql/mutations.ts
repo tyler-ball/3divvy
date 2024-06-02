@@ -18,9 +18,11 @@ export const createContract = /* GraphQL */ `mutation CreateContract(
     id
     job {
       amountOffered
+      colors
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -28,6 +30,8 @@ export const createContract = /* GraphQL */ `mutation CreateContract(
       __typename
     }
     jobID
+    paid
+    status
     updatedAt
     __typename
   }
@@ -42,17 +46,21 @@ export const createJob = /* GraphQL */ `mutation CreateJob(
 ) {
   createJob(condition: $condition, input: $input) {
     amountOffered
+    colors
     contract {
       contractor
       createdAt
       id
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
     createdAt
     description
     id
+    modelFilePath
     requiredMaterials
     submitter
     title
@@ -69,7 +77,6 @@ export const createUserProfile = /* GraphQL */ `mutation CreateUserProfile(
   $input: CreateUserProfileInput!
 ) {
   createUserProfile(condition: $condition, input: $input) {
-    ccNum
     createdAt
     email
     id
@@ -93,9 +100,11 @@ export const deleteContract = /* GraphQL */ `mutation DeleteContract(
     id
     job {
       amountOffered
+      colors
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -103,6 +112,8 @@ export const deleteContract = /* GraphQL */ `mutation DeleteContract(
       __typename
     }
     jobID
+    paid
+    status
     updatedAt
     __typename
   }
@@ -117,17 +128,21 @@ export const deleteJob = /* GraphQL */ `mutation DeleteJob(
 ) {
   deleteJob(condition: $condition, input: $input) {
     amountOffered
+    colors
     contract {
       contractor
       createdAt
       id
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
     createdAt
     description
     id
+    modelFilePath
     requiredMaterials
     submitter
     title
@@ -144,7 +159,6 @@ export const deleteUserProfile = /* GraphQL */ `mutation DeleteUserProfile(
   $input: DeleteUserProfileInput!
 ) {
   deleteUserProfile(condition: $condition, input: $input) {
-    ccNum
     createdAt
     email
     id
@@ -168,9 +182,11 @@ export const updateContract = /* GraphQL */ `mutation UpdateContract(
     id
     job {
       amountOffered
+      colors
       createdAt
       description
       id
+      modelFilePath
       requiredMaterials
       submitter
       title
@@ -178,6 +194,8 @@ export const updateContract = /* GraphQL */ `mutation UpdateContract(
       __typename
     }
     jobID
+    paid
+    status
     updatedAt
     __typename
   }
@@ -192,17 +210,21 @@ export const updateJob = /* GraphQL */ `mutation UpdateJob(
 ) {
   updateJob(condition: $condition, input: $input) {
     amountOffered
+    colors
     contract {
       contractor
       createdAt
       id
       jobID
+      paid
+      status
       updatedAt
       __typename
     }
     createdAt
     description
     id
+    modelFilePath
     requiredMaterials
     submitter
     title
@@ -219,7 +241,6 @@ export const updateUserProfile = /* GraphQL */ `mutation UpdateUserProfile(
   $input: UpdateUserProfileInput!
 ) {
   updateUserProfile(condition: $condition, input: $input) {
-    ccNum
     createdAt
     email
     id

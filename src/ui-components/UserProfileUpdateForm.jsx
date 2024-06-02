@@ -23,7 +23,6 @@ export default function UserProfileUpdateForm(props) {
     profileOwner: "",
     email: "",
     shippingAddress: "",
-    ccNum: "",
   };
   const [profileOwner, setProfileOwner] = React.useState(
     initialValues.profileOwner
@@ -32,7 +31,6 @@ export default function UserProfileUpdateForm(props) {
   const [shippingAddress, setShippingAddress] = React.useState(
     initialValues.shippingAddress
   );
-  const [ccNum, setCcNum] = React.useState(initialValues.ccNum);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = userProfileRecord
@@ -41,7 +39,6 @@ export default function UserProfileUpdateForm(props) {
     setProfileOwner(cleanValues.profileOwner);
     setEmail(cleanValues.email);
     setShippingAddress(cleanValues.shippingAddress);
-    setCcNum(cleanValues.ccNum);
     setErrors({});
   };
   const [userProfileRecord, setUserProfileRecord] =
@@ -65,7 +62,6 @@ export default function UserProfileUpdateForm(props) {
     profileOwner: [{ type: "Required" }],
     email: [{ type: "Required" }],
     shippingAddress: [],
-    ccNum: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -96,7 +92,6 @@ export default function UserProfileUpdateForm(props) {
           profileOwner,
           email,
           shippingAddress: shippingAddress ?? null,
-          ccNum: ccNum ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -160,7 +155,6 @@ export default function UserProfileUpdateForm(props) {
               profileOwner: value,
               email,
               shippingAddress,
-              ccNum,
             };
             const result = onChange(modelFields);
             value = result?.profileOwner ?? value;
@@ -187,7 +181,6 @@ export default function UserProfileUpdateForm(props) {
               profileOwner,
               email: value,
               shippingAddress,
-              ccNum,
             };
             const result = onChange(modelFields);
             value = result?.email ?? value;
@@ -214,7 +207,6 @@ export default function UserProfileUpdateForm(props) {
               profileOwner,
               email,
               shippingAddress: value,
-              ccNum,
             };
             const result = onChange(modelFields);
             value = result?.shippingAddress ?? value;
@@ -228,33 +220,6 @@ export default function UserProfileUpdateForm(props) {
         errorMessage={errors.shippingAddress?.errorMessage}
         hasError={errors.shippingAddress?.hasError}
         {...getOverrideProps(overrides, "shippingAddress")}
-      ></TextField>
-      <TextField
-        label="Cc num"
-        isRequired={false}
-        isReadOnly={false}
-        value={ccNum}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              profileOwner,
-              email,
-              shippingAddress,
-              ccNum: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.ccNum ?? value;
-          }
-          if (errors.ccNum?.hasError) {
-            runValidationTasks("ccNum", value);
-          }
-          setCcNum(value);
-        }}
-        onBlur={() => runValidationTasks("ccNum", ccNum)}
-        errorMessage={errors.ccNum?.errorMessage}
-        hasError={errors.ccNum?.hasError}
-        {...getOverrideProps(overrides, "ccNum")}
       ></TextField>
       <Flex
         justifyContent="space-between"

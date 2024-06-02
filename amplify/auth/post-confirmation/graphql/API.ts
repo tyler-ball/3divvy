@@ -9,31 +9,57 @@ export type Contract = {
   id: string,
   job?: Job | null,
   jobID: string,
+  paid?: Paid | null,
+  status?: ContractStatus | null,
   updatedAt: string,
 };
 
 export type Job = {
   __typename: "Job",
   amountOffered?: number | null,
+  colors?: Array< Colors | null > | null,
   contract?: Contract | null,
   createdAt: string,
   description?: string | null,
   id: string,
-  requiredMaterials?: RequiredMaterials | null,
+  modelFilePath?: string | null,
+  requiredMaterials?: Array< RequiredMaterials | null > | null,
   submitter: string,
   title?: string | null,
   updatedAt: string,
 };
 
+export enum Colors {
+  Black = "Black",
+  Blue = "Blue",
+  Red = "Red",
+  Transparent = "Transparent",
+  White = "White",
+}
+
+
 export enum RequiredMaterials {
-  NYLON = "NYLON",
-  PLA = "PLA",
+  CarbonFiber = "CarbonFiber",
+  Plastic = "Plastic",
+  Resin = "Resin",
+}
+
+
+export enum Paid {
+  Paid = "Paid",
+  Unpaid = "Unpaid",
+}
+
+
+export enum ContractStatus {
+  Accepted = "Accepted",
+  Printing = "Printing",
+  Shipped = "Shipped",
 }
 
 
 export type UserProfile = {
   __typename: "UserProfile",
-  ccNum?: string | null,
   createdAt: string,
   email: string,
   id: string,
@@ -50,6 +76,8 @@ export type ModelContractFilterInput = {
   jobID?: ModelIDInput | null,
   not?: ModelContractFilterInput | null,
   or?: Array< ModelContractFilterInput | null > | null,
+  paid?: ModelPaidInput | null,
+  status?: ModelContractStatusInput | null,
   updatedAt?: ModelStringInput | null,
 };
 
@@ -109,6 +137,16 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
+export type ModelPaidInput = {
+  eq?: Paid | null,
+  ne?: Paid | null,
+};
+
+export type ModelContractStatusInput = {
+  eq?: ContractStatus | null,
+  ne?: ContractStatus | null,
+};
+
 export type ModelContractConnection = {
   __typename: "ModelContractConnection",
   items:  Array<Contract | null >,
@@ -118,12 +156,14 @@ export type ModelContractConnection = {
 export type ModelJobFilterInput = {
   amountOffered?: ModelFloatInput | null,
   and?: Array< ModelJobFilterInput | null > | null,
+  colors?: ModelColorsListInput | null,
   createdAt?: ModelStringInput | null,
   description?: ModelStringInput | null,
   id?: ModelIDInput | null,
+  modelFilePath?: ModelStringInput | null,
   not?: ModelJobFilterInput | null,
   or?: Array< ModelJobFilterInput | null > | null,
-  requiredMaterials?: ModelRequiredMaterialsInput | null,
+  requiredMaterials?: ModelRequiredMaterialsListInput | null,
   submitter?: ModelStringInput | null,
   title?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
@@ -141,9 +181,18 @@ export type ModelFloatInput = {
   ne?: number | null,
 };
 
-export type ModelRequiredMaterialsInput = {
-  eq?: RequiredMaterials | null,
-  ne?: RequiredMaterials | null,
+export type ModelColorsListInput = {
+  contains?: Colors | null,
+  eq?: Array< Colors | null > | null,
+  ne?: Array< Colors | null > | null,
+  notContains?: Colors | null,
+};
+
+export type ModelRequiredMaterialsListInput = {
+  contains?: RequiredMaterials | null,
+  eq?: Array< RequiredMaterials | null > | null,
+  ne?: Array< RequiredMaterials | null > | null,
+  notContains?: RequiredMaterials | null,
 };
 
 export type ModelJobConnection = {
@@ -154,7 +203,6 @@ export type ModelJobConnection = {
 
 export type ModelUserProfileFilterInput = {
   and?: Array< ModelUserProfileFilterInput | null > | null,
-  ccNum?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
   email?: ModelStringInput | null,
   id?: ModelIDInput | null,
@@ -178,6 +226,8 @@ export type ModelContractConditionInput = {
   jobID?: ModelIDInput | null,
   not?: ModelContractConditionInput | null,
   or?: Array< ModelContractConditionInput | null > | null,
+  paid?: ModelPaidInput | null,
+  status?: ModelContractStatusInput | null,
   updatedAt?: ModelStringInput | null,
 };
 
@@ -185,16 +235,20 @@ export type CreateContractInput = {
   contractor: string,
   id?: string | null,
   jobID: string,
+  paid?: Paid | null,
+  status?: ContractStatus | null,
 };
 
 export type ModelJobConditionInput = {
   amountOffered?: ModelFloatInput | null,
   and?: Array< ModelJobConditionInput | null > | null,
+  colors?: ModelColorsListInput | null,
   createdAt?: ModelStringInput | null,
   description?: ModelStringInput | null,
+  modelFilePath?: ModelStringInput | null,
   not?: ModelJobConditionInput | null,
   or?: Array< ModelJobConditionInput | null > | null,
-  requiredMaterials?: ModelRequiredMaterialsInput | null,
+  requiredMaterials?: ModelRequiredMaterialsListInput | null,
   submitter?: ModelStringInput | null,
   title?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
@@ -202,16 +256,17 @@ export type ModelJobConditionInput = {
 
 export type CreateJobInput = {
   amountOffered?: number | null,
+  colors?: Array< Colors | null > | null,
   description?: string | null,
   id?: string | null,
-  requiredMaterials?: RequiredMaterials | null,
+  modelFilePath?: string | null,
+  requiredMaterials?: Array< RequiredMaterials | null > | null,
   submitter: string,
   title?: string | null,
 };
 
 export type ModelUserProfileConditionInput = {
   and?: Array< ModelUserProfileConditionInput | null > | null,
-  ccNum?: ModelStringInput | null,
   createdAt?: ModelStringInput | null,
   email?: ModelStringInput | null,
   not?: ModelUserProfileConditionInput | null,
@@ -222,7 +277,6 @@ export type ModelUserProfileConditionInput = {
 };
 
 export type CreateUserProfileInput = {
-  ccNum?: string | null,
   email: string,
   id?: string | null,
   profileOwner: string,
@@ -245,19 +299,22 @@ export type UpdateContractInput = {
   contractor?: string | null,
   id: string,
   jobID?: string | null,
+  paid?: Paid | null,
+  status?: ContractStatus | null,
 };
 
 export type UpdateJobInput = {
   amountOffered?: number | null,
+  colors?: Array< Colors | null > | null,
   description?: string | null,
   id: string,
-  requiredMaterials?: RequiredMaterials | null,
+  modelFilePath?: string | null,
+  requiredMaterials?: Array< RequiredMaterials | null > | null,
   submitter?: string | null,
   title?: string | null,
 };
 
 export type UpdateUserProfileInput = {
-  ccNum?: string | null,
   email?: string | null,
   id: string,
   profileOwner?: string | null,
@@ -271,6 +328,8 @@ export type ModelSubscriptionContractFilterInput = {
   id?: ModelSubscriptionIDInput | null,
   jobID?: ModelSubscriptionIDInput | null,
   or?: Array< ModelSubscriptionContractFilterInput | null > | null,
+  paid?: ModelSubscriptionStringInput | null,
+  status?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
 };
 
@@ -307,9 +366,11 @@ export type ModelSubscriptionIDInput = {
 export type ModelSubscriptionJobFilterInput = {
   amountOffered?: ModelSubscriptionFloatInput | null,
   and?: Array< ModelSubscriptionJobFilterInput | null > | null,
+  colors?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   description?: ModelSubscriptionStringInput | null,
   id?: ModelSubscriptionIDInput | null,
+  modelFilePath?: ModelSubscriptionStringInput | null,
   or?: Array< ModelSubscriptionJobFilterInput | null > | null,
   requiredMaterials?: ModelSubscriptionStringInput | null,
   submitter?: ModelStringInput | null,
@@ -331,7 +392,6 @@ export type ModelSubscriptionFloatInput = {
 
 export type ModelSubscriptionUserProfileFilterInput = {
   and?: Array< ModelSubscriptionUserProfileFilterInput | null > | null,
-  ccNum?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   email?: ModelSubscriptionStringInput | null,
   id?: ModelSubscriptionIDInput | null,
@@ -354,15 +414,19 @@ export type GetContractQuery = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -375,18 +439,22 @@ export type GetJobQuery = {
   getJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -400,7 +468,6 @@ export type GetUserProfileQueryVariables = {
 export type GetUserProfileQuery = {
   getUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
@@ -425,6 +492,8 @@ export type ListContractsQuery = {
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null >,
     nextToken?: string | null,
@@ -443,10 +512,12 @@ export type ListJobsQuery = {
     items:  Array< {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
@@ -466,7 +537,6 @@ export type ListUserProfilesQuery = {
     __typename: "ModelUserProfileConnection",
     items:  Array< {
       __typename: "UserProfile",
-      ccNum?: string | null,
       createdAt: string,
       email: string,
       id: string,
@@ -492,15 +562,19 @@ export type CreateContractMutation = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -514,18 +588,22 @@ export type CreateJobMutation = {
   createJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -540,7 +618,6 @@ export type CreateUserProfileMutationVariables = {
 export type CreateUserProfileMutation = {
   createUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
@@ -564,15 +641,19 @@ export type DeleteContractMutation = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -586,18 +667,22 @@ export type DeleteJobMutation = {
   deleteJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -612,7 +697,6 @@ export type DeleteUserProfileMutationVariables = {
 export type DeleteUserProfileMutation = {
   deleteUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
@@ -636,15 +720,19 @@ export type UpdateContractMutation = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -658,18 +746,22 @@ export type UpdateJobMutation = {
   updateJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -684,7 +776,6 @@ export type UpdateUserProfileMutationVariables = {
 export type UpdateUserProfileMutation = {
   updateUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
@@ -708,15 +799,19 @@ export type OnCreateContractSubscription = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -730,18 +825,22 @@ export type OnCreateJobSubscription = {
   onCreateJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -756,7 +855,6 @@ export type OnCreateUserProfileSubscriptionVariables = {
 export type OnCreateUserProfileSubscription = {
   onCreateUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
@@ -780,15 +878,19 @@ export type OnDeleteContractSubscription = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -802,18 +904,22 @@ export type OnDeleteJobSubscription = {
   onDeleteJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -828,7 +934,6 @@ export type OnDeleteUserProfileSubscriptionVariables = {
 export type OnDeleteUserProfileSubscription = {
   onDeleteUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
@@ -852,15 +957,19 @@ export type OnUpdateContractSubscription = {
     job?:  {
       __typename: "Job",
       amountOffered?: number | null,
+      colors?: Array< Colors | null > | null,
       createdAt: string,
       description?: string | null,
       id: string,
-      requiredMaterials?: RequiredMaterials | null,
+      modelFilePath?: string | null,
+      requiredMaterials?: Array< RequiredMaterials | null > | null,
       submitter: string,
       title?: string | null,
       updatedAt: string,
     } | null,
     jobID: string,
+    paid?: Paid | null,
+    status?: ContractStatus | null,
     updatedAt: string,
   } | null,
 };
@@ -874,18 +983,22 @@ export type OnUpdateJobSubscription = {
   onUpdateJob?:  {
     __typename: "Job",
     amountOffered?: number | null,
+    colors?: Array< Colors | null > | null,
     contract?:  {
       __typename: "Contract",
       contractor: string,
       createdAt: string,
       id: string,
       jobID: string,
+      paid?: Paid | null,
+      status?: ContractStatus | null,
       updatedAt: string,
     } | null,
     createdAt: string,
     description?: string | null,
     id: string,
-    requiredMaterials?: RequiredMaterials | null,
+    modelFilePath?: string | null,
+    requiredMaterials?: Array< RequiredMaterials | null > | null,
     submitter: string,
     title?: string | null,
     updatedAt: string,
@@ -900,7 +1013,6 @@ export type OnUpdateUserProfileSubscriptionVariables = {
 export type OnUpdateUserProfileSubscription = {
   onUpdateUserProfile?:  {
     __typename: "UserProfile",
-    ccNum?: string | null,
     createdAt: string,
     email: string,
     id: string,
