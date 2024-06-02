@@ -327,7 +327,7 @@ export default function Market({ user }: { user: AuthUser }) {
             modelSize: {
                 gt: formData.minModelSize * BYTES_PER_MB,
                 lt: formData.maxModelSize * BYTES_PER_MB
-            }
+            },
         }
 
         let colors = [];
@@ -366,7 +366,6 @@ export default function Market({ user }: { user: AuthUser }) {
             jobID: job_id,
             contractor: user.userId,
             status: 'Accepted',
-            paid: 'Unpaid'
         });
 
         if ('errors' in resp) {
@@ -400,7 +399,9 @@ export default function Market({ user }: { user: AuthUser }) {
                     <Divider></Divider>
                     <Box>
                         {Object.keys(filters).length > 0 ?
-                            (<JobsTable filters={filters} selectPopup={rowSelectPopup} />) :
+                            (<JobsTable filters={filters} 
+                                excludeContracted={true}
+                                selectPopup={rowSelectPopup} />) :
                             (<p>Apply some filters, and we'll show available jobs</p>)
                         }
                     </Box>

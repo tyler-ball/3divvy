@@ -30,7 +30,7 @@ const CONTRACT_COLUMNS: GridColDef[] = [
         width: 150,
     },
     {
-        field: 'paid',
+        field: 'job_paid',
         headerName: 'Payment Status',
         width: 150,
     }
@@ -73,21 +73,43 @@ export default function ContractsTable(props) {
                 filter: {
                     contractor: { eq: user.userId }
                 },
-                selectionSet: ['id', 'status', 'paid', 'job.*'],
+                selectionSet: ['id', 'status', 'jobID'],
                 limit: 30,
                 nextToken: pageTokens[pageTokens.length - 1],
                 authMode: 'userPool'
             });
 
-            console.log('CONTRACTS:');
-            console.log(new_contracts);
+            let new_contracts_flattened = [];
+            for(let contract of new_contracts) {
+                const {data: job} = await client.models.Job.get({
+                    id: contract.jobID
+                });
+                new_contracts_flattened.push({
+                    ...contract,
+                    job_title: job?.title,
+                    job_description: job?.description,
+                    job_paid: job?.hasPaid ? "Paid" : "Unpaid",
+                    model_file_path: job?.modelFilePath
+                });
+            }
 
-            const new_contracts_flattened = new_contracts.map((contract) => ({
-                ...contract,
-                job_title: contract?.job?.title,
-                job_description: contract?.job?.description,
-                model_file_path: contract?.job?.modelFilePath
-            }))
+            //const new_contracts_flattened = new_contracts.map(async (contract) => {
+            //    return {
+            //        job_title: job?.title,
+            //        job_description: job?.description,
+            //        job_paid: job?.hasPaid ? "Paid" : "Unpaid",
+            //        model_file_path: job?.modelFilePath
+            //    };
+            //})
+
+
+            //const new_contracts_flattened = new_contracts.map((contract) => ({
+            //    ...contract,
+            //    job_title: contract?.job?.title,
+            //    job_description: contract?.job?.description,
+            //    job_paid: contract?.job?.hasPaid ? "Paid" : "Unpaid",
+            //    model_file_path: contract?.job?.modelFilePath
+            //}))
 
             console.log('CONTRACTS:');
             console.log(new_contracts[0]?.job)
