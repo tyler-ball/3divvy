@@ -89,6 +89,7 @@ async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formDa
             data: modelFile
         });
     } catch (error) {
+        console.log(error);
         return { success: false, message: 'Error uploading file: ' + error };
     }
 

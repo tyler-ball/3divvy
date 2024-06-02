@@ -16,7 +16,10 @@ const schema = a.schema({
       colors: a.ref("Colors").array(),
       modelFilePath: a.string(),
       modelSize: a.integer(),
-      contract: a.hasOne('Contract', 'jobID')
+      //contract: a.hasOne('Contract', 'jobID'),
+      contract: a.belongsTo('Contract', 'contractID'),
+      contractID: a.id(),
+      hasPaid: a.boolean().default(false)
     })
     .authorization((allow) => [
       allow.ownerDefinedIn("submitter"),
@@ -24,10 +27,10 @@ const schema = a.schema({
   Contract: a
     .model({
       jobID: a.id().required(),
-      job: a.belongsTo('Job', 'jobID'),
+      //job: a.belongsTo('Job', 'jobID'),
+      job: a.hasOne('Job', 'contractID'),
       contractor: a.string().required(),
       status: a.ref("ContractStatus"),
-      paid: a.ref("Paid")
     })
     .authorization((allow) => [
       allow.ownerDefinedIn("contractor"),

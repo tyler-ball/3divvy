@@ -89,6 +89,7 @@ export default function JobsTable(props) {
     const selectPopup = props.selectPopup;
     const allowDelete = props.allowDelete ?? false;
     const allowEdit = props.allowEdit ?? false;
+    const excludeContracted = props.excludeContracted ?? false;
     const client = generateClient<Schema>();
     const { user, signOut } = useAuthenticator((context) => [context.user]);
     const [jobs, setJobs] = useState([]);
@@ -100,7 +101,7 @@ export default function JobsTable(props) {
 
     const fetchData = async (init, nextPage) => {
         if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
-            const { data: new_jobs, nextToken } = await client.models.Job.list({
+            const { data: raw_jobs, nextToken } = await client.models.Job.list({
                 filter: filters,
                 limit: 30,
                 nextToken: pageTokens[pageTokens.length - 1],
@@ -114,13 +115,14 @@ export default function JobsTable(props) {
                     'requiredMaterials', 
                     'colors', 
                     'modelSize',
+                    'contractID',
                     'contract.*']
             });
 
-            console.log("JOBS TABLE");
-            console.log(new_jobs[0]);
-            console.log(new_jobs[1]);
-            console.log(new_jobs[2]);
+            console.log(raw_jobs.filter((j) => { return j.contractID === null }));
+            const new_jobs = excludeContracted ? 
+                raw_jobs.filter((j) => { return j.contractID === null }) : 
+                raw_jobs;
 
 
             if (!nextToken) {

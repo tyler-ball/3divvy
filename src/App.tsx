@@ -3,7 +3,11 @@ import '@aws-amplify/ui-react/styles.css'
 import './App.css';
 import { BrowserRouter, Routes, Route, } from "react-router-dom";
 import Home from './pages/Home.tsx';
-import { EditJob, DeleteJob, EditContract, DeleteContract, PaymentInfo } from './pages/Home.tsx';
+import { EditJob } from './pages/EditJob.tsx';
+import { DeleteJob } from './pages/DeleteJob.tsx';
+import { EditContract } from './pages/EditContract.tsx';
+import { DeleteContract } from './pages/DeleteContract.tsx';
+import { PaymentInfo } from './pages/PaymentInfo.tsx';
 import Market from './pages/Market.tsx';
 import NoPage from './pages/NoPage.tsx';
 import NavBar from './components/NavBar.jsx';
