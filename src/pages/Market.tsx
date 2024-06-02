@@ -328,6 +328,9 @@ export default function Market({ user }: { user: AuthUser }) {
                 gt: formData.minModelSize * BYTES_PER_MB,
                 lt: formData.maxModelSize * BYTES_PER_MB
             },
+            hasContract: {
+                eq: false
+            }
         }
 
         let colors = [];
@@ -374,7 +377,16 @@ export default function Market({ user }: { user: AuthUser }) {
             setShowAlert(true)
         }
 
-        let { data: contracts, errs } = await client.models.Contract.list();
+        let job_upd_resp = await client.models.Job.update({
+            id: job_id,
+            hasContract: true
+        })
+
+        if ('errors' in job_upd_resp) {
+            setAlertType('error')
+            setShowAlertMessage('Error updating job')
+            setShowAlert(true)
+        }
     }
 
     const rowSelectPopup = (job_id) => {

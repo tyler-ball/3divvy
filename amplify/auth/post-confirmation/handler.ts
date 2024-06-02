@@ -42,7 +42,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
         query: createUserProfile,
         variables: {
             input: {
-                profileOwner: `${event.request.userAttributes.sub}::${event.userName}`,
+                profileOwner: event.userName,
                 email: event.request.userAttributes.email,
             },
         },

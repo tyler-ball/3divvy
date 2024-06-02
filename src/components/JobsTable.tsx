@@ -104,7 +104,7 @@ export default function JobsTable(props) {
             const { data: raw_jobs, nextToken } = await client.models.Job.list({
                 filter: filters,
                 limit: 30,
-                nextToken: pageTokens[pageTokens.length - 1],
+                nextToken: init ? null : pageTokens[pageTokens.length - 1],
                 authMode: 'userPool',
                 selectionSet: ['id', 
                     'createdAt', 

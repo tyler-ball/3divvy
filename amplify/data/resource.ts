@@ -19,11 +19,12 @@ const schema = a.schema({
       //contract: a.hasOne('Contract', 'jobID'),
       contract: a.belongsTo('Contract', 'contractID'),
       contractID: a.id(),
-      hasPaid: a.boolean().default(false)
+      hasPaid: a.boolean().default(false),
+      hasContract: a.boolean().default(false)
     })
     .authorization((allow) => [
       allow.ownerDefinedIn("submitter"),
-      allow.authenticated().to(["read"])]),
+      allow.authenticated().to(["read", "update"])]),
   Contract: a
     .model({
       jobID: a.id().required(),
@@ -39,7 +40,7 @@ const schema = a.schema({
     .model({
       profileOwner: a.string().required(),
       email: a.string().required(),
-      shippingAddress: a.string(),
+      shippingAddress: a.string()
     })
     .authorization((allow) => [allow.ownerDefinedIn("profileOwner")]),
 }).authorization((allow) => [allow.resource(postConfirmation)]);
