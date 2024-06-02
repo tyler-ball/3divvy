@@ -40,7 +40,7 @@ const schema = a.schema({
     .model({
       profileOwner: a.string().required(),
       email: a.string().required(),
-      shippingAddress: a.string()
+      shippingAddress: a.string().default('')
     })
     .authorization((allow) => [allow.ownerDefinedIn("profileOwner")]),
 }).authorization((allow) => [allow.resource(postConfirmation)]);
