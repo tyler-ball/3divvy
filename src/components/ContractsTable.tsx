@@ -93,7 +93,7 @@ export default function ContractsTable(props) {
                     filter: {
                         profileOwner: { eq: job?.submitter }
                     },
-                    limit: 1
+                    // limit: 1
                 });
                 const shipping_address = userProfiles[0]?.shippingAddress;
                 new_contracts_flattened.push({
