@@ -39,7 +39,9 @@ const schema = a.schema({
       email: a.string().required(),
       shippingAddress: a.string(),
     })
-    .authorization((allow) => [allow.ownerDefinedIn("profileOwner")]),
+    .authorization((allow) => [
+      allow.ownerDefinedIn("profileOwner"),
+      allow.authenticated().to(["read"])]),
 }).authorization((allow) => [allow.resource(postConfirmation)]);
 
 export type Schema = ClientSchema<typeof schema>;

@@ -33,6 +33,11 @@ const CONTRACT_COLUMNS: GridColDef[] = [
         field: 'job_paid',
         headerName: 'Payment Status',
         width: 150,
+    },
+    {
+        field: 'shipping_address',
+        headerName: 'Shipping Address',
+        width: 150,
     }
 ];
 
@@ -80,16 +85,24 @@ export default function ContractsTable(props) {
             });
 
             let new_contracts_flattened = [];
-            for(let contract of new_contracts) {
-                const {data: job} = await client.models.Job.get({
+            for (let contract of new_contracts) {
+                const { data: job } = await client.models.Job.get({
                     id: contract.jobID
                 });
+                const { data: userProfiles } = await client.models.UserProfile.list({
+                    filter: {
+                        profileOwner: { eq: job?.submitter }
+                    },
+                    limit: 1
+                });
+                const shipping_address = userProfiles[0]?.shippingAddress;
                 new_contracts_flattened.push({
                     ...contract,
                     job_title: job?.title,
                     job_description: job?.description,
                     job_paid: job?.hasPaid ? "Paid" : "Unpaid",
-                    model_file_path: job?.modelFilePath
+                    model_file_path: job?.modelFilePath,
+                    shipping_address: job?.hasPaid ? shipping_address : "Address shown after payment"
                 });
             }
 
