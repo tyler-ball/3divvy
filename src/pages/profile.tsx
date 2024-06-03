@@ -13,7 +13,7 @@ export default function Profile({ user }: { user: AuthUser | undefined }) {
 
     useEffect(() => {
         const sub = client.models.UserProfile.observeQuery({
-            // filter: { profileOwner: { eq: filterId } },
+            filter: { profileOwner: { eq: user?.userId } },
             authMode: "userPool"
         }).subscribe({
             next: ({ items }) => {
