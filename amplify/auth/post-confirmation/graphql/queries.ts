@@ -18,8 +18,11 @@ export const getContract = /* GraphQL */ `query GetContract($id: ID!) {
       colors
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -27,7 +30,6 @@ export const getContract = /* GraphQL */ `query GetContract($id: ID!) {
       __typename
     }
     jobID
-    paid
     status
     updatedAt
     __typename
@@ -46,15 +48,17 @@ export const getJob = /* GraphQL */ `query GetJob($id: ID!) {
       createdAt
       id
       jobID
-      paid
       status
       updatedAt
       __typename
     }
     createdAt
     description
+    hasContract
+    hasPaid
     id
     modelFilePath
+    modelSize
     requiredMaterials
     submitter
     title
@@ -89,7 +93,6 @@ export const listContracts = /* GraphQL */ `query ListContracts(
       createdAt
       id
       jobID
-      paid
       status
       updatedAt
       __typename
@@ -109,8 +112,11 @@ export const listJobs = /* GraphQL */ `query ListJobs($filter: ModelJobFilterInp
       colors
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title

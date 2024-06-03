@@ -13,8 +13,11 @@ export const getContract = /* GraphQL */ `
         colors
         createdAt
         description
+        hasContract
+        hasPaid
         id
         modelFilePath
+        modelSize
         requiredMaterials
         submitter
         title
@@ -22,7 +25,6 @@ export const getContract = /* GraphQL */ `
         __typename
       }
       jobID
-      paid
       status
       updatedAt
       __typename
@@ -39,15 +41,17 @@ export const getJob = /* GraphQL */ `
         createdAt
         id
         jobID
-        paid
         status
         updatedAt
         __typename
       }
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -81,7 +85,6 @@ export const listContracts = /* GraphQL */ `
         createdAt
         id
         jobID
-        paid
         status
         updatedAt
         __typename
@@ -103,8 +106,11 @@ export const listJobs = /* GraphQL */ `
         colors
         createdAt
         description
+        hasContract
+        hasPaid
         id
         modelFilePath
+        modelSize
         requiredMaterials
         submitter
         title

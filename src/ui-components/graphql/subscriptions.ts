@@ -16,8 +16,11 @@ export const onCreateContract = /* GraphQL */ `
         colors
         createdAt
         description
+        hasContract
+        hasPaid
         id
         modelFilePath
+        modelSize
         requiredMaterials
         submitter
         title
@@ -25,7 +28,6 @@ export const onCreateContract = /* GraphQL */ `
         __typename
       }
       jobID
-      paid
       status
       updatedAt
       __typename
@@ -45,15 +47,17 @@ export const onCreateJob = /* GraphQL */ `
         createdAt
         id
         jobID
-        paid
         status
         updatedAt
         __typename
       }
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -92,8 +96,11 @@ export const onDeleteContract = /* GraphQL */ `
         colors
         createdAt
         description
+        hasContract
+        hasPaid
         id
         modelFilePath
+        modelSize
         requiredMaterials
         submitter
         title
@@ -101,7 +108,6 @@ export const onDeleteContract = /* GraphQL */ `
         __typename
       }
       jobID
-      paid
       status
       updatedAt
       __typename
@@ -121,15 +127,17 @@ export const onDeleteJob = /* GraphQL */ `
         createdAt
         id
         jobID
-        paid
         status
         updatedAt
         __typename
       }
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -168,8 +176,11 @@ export const onUpdateContract = /* GraphQL */ `
         colors
         createdAt
         description
+        hasContract
+        hasPaid
         id
         modelFilePath
+        modelSize
         requiredMaterials
         submitter
         title
@@ -177,7 +188,6 @@ export const onUpdateContract = /* GraphQL */ `
         __typename
       }
       jobID
-      paid
       status
       updatedAt
       __typename
@@ -197,15 +207,17 @@ export const onUpdateJob = /* GraphQL */ `
         createdAt
         id
         jobID
-        paid
         status
         updatedAt
         __typename
       }
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
