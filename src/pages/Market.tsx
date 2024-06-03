@@ -330,6 +330,9 @@ export default function Market({ user }: { user: AuthUser }) {
             },
             hasContract: {
                 eq: false
+            },
+            submitter: {
+                ne: user.userId
             }
         }
 

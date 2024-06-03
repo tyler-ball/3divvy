@@ -100,11 +100,14 @@ export default function JobsTable(props) {
     const [jobsByID, setJobsByID] = useState({});
 
     const fetchData = async (init, nextPage) => {
+        let prevToken = init ? '' : pageTokens[pageTokens.length - 1];
+        console.log("PREV TOKEN");
+        console.log(prevToken);
         if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
-            const { data: raw_jobs, nextToken } = await client.models.Job.list({
+            const raw_resp = await client.models.Job.list({
                 filter: filters,
-                limit: 30,
-                nextToken: init ? null : pageTokens[pageTokens.length - 1],
+                limit: 10,
+                nextToken: prevToken,
                 authMode: 'userPool',
                 selectionSet: ['id', 
                     'createdAt', 
@@ -118,19 +121,15 @@ export default function JobsTable(props) {
                     'contractID',
                     'contract.*']
             });
-
-            console.log(raw_jobs.filter((j) => { return j.contractID === null }));
-            const new_jobs = excludeContracted ? 
-                raw_jobs.filter((j) => { return j.contractID === null }) : 
-                raw_jobs;
+            let new_jobs = raw_resp.data;
+            let nextToken = raw_resp.nextToken;
 
 
-            if (!nextToken) {
-                setHasMorePages(false);
-            }
+            setHasMorePages(nextToken != null && new_jobs.length == 10);
             setPageTokens(init ? [nextToken] : [...pageTokens, nextToken]);
             if (init) {
                 setJobs(new_jobs.length > 0 ? [new_jobs] : []);
+                setCurrentPageIndex(1);
             } else if (new_jobs.length > 0) {
                 setJobs([...jobs, new_jobs]);
             }
@@ -169,6 +168,7 @@ export default function JobsTable(props) {
                 columns={JOB_COLUMNS}
                 rows={jobs[currentPageIndex - 1]}
                 onRowSelectionModelChange={handleSelectionChange}
+                hideFooter={true}
             />
             {selectedRows.length > 0 && selectPopup(selectedRows[0], jobsByID[selectedRows[0]])}
             <Pagination
