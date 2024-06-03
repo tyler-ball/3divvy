@@ -81,6 +81,14 @@ const JOB_COLUMNS: GridColDef<(typeof rows)[number]>[] = [
         headerName: 'Model Size',
         width: 150,
         valueFormatter: MB_FORMATTER
+    },
+    {
+        field: 'contract',
+        headerName: 'Status',
+        width: 150,
+        valueFormatter: (con) => {
+            return (con === null) ? "Not contracted" : con.status;
+        }
     }
 ];
 
