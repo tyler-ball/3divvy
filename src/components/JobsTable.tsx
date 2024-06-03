@@ -109,16 +109,15 @@ export default function JobsTable(props) {
                 limit: 30,
                 nextToken: prevToken,
                 authMode: 'userPool',
-                selectionSet: ['id', 
-                    'createdAt', 
-                    'submitter', 
-                    'title', 
-                    'description', 
-                    'amountOffered', 
-                    'requiredMaterials', 
-                    'colors', 
+                selectionSet: ['id',
+                    'createdAt',
+                    'submitter',
+                    'title',
+                    'description',
+                    'amountOffered',
+                    'requiredMaterials',
+                    'colors',
                     'modelSize',
-                    'contractID',
                     'contract.*']
             });
             let new_jobs = raw_resp.data;
@@ -135,7 +134,7 @@ export default function JobsTable(props) {
             }
 
             let jobs_dict = init ? {} : JSON.parse(JSON.stringify(jobsByID));
-            for(let job of new_jobs) {
+            for (let job of new_jobs) {
                 jobs_dict[job.id] = job;
             }
 
