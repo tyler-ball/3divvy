@@ -31,13 +31,21 @@ export function DeleteContract(props) {
     const [contract, setContract] = useState<Contract>();
 
     const deleteContract = async () => {
-        const { data: new_contract, errors } = await client.models.Contract.delete({
+        const { data: deleted_contract, errors: del_contract_errs } = await client.models.Contract.delete({
             id: contract_id
         });
-        if (errors === undefined) {
-            navigate("/home");
+        if (del_contract_errs === undefined) {
+            const { data: job, errors: update_job_errs } = await client.models.Job.update({
+                id: deleted_contract.jobID,
+                hasContract: false
+            });
+            if (update_job_errs === undefined) {
+                navigate("/home");
+            } else {
+                console.log(update_job_errs);
+            }
         } else {
-            console.log(errors);
+            console.log(del_contract_errs);
         }
     }
 
@@ -47,4 +55,3 @@ export function DeleteContract(props) {
             <Button color="primary" onClick={deleteContract}>Delete</Button>
         </div>);
 }
-

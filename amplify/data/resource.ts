@@ -16,9 +16,7 @@ const schema = a.schema({
       colors: a.ref("Colors").array(),
       modelFilePath: a.string(),
       modelSize: a.integer(),
-      //contract: a.hasOne('Contract', 'jobID'),
-      contract: a.belongsTo('Contract', 'contractID'),
-      contractID: a.id(),
+      contract: a.hasOne('Contract', 'jobID'),
       hasPaid: a.boolean().default(false),
       hasContract: a.boolean().default(false)
     })
@@ -28,8 +26,7 @@ const schema = a.schema({
   Contract: a
     .model({
       jobID: a.id().required(),
-      //job: a.belongsTo('Job', 'jobID'),
-      job: a.hasOne('Job', 'contractID'),
+      job: a.belongsTo('Job', 'jobID'),
       contractor: a.string().required(),
       status: a.ref("ContractStatus"),
     })
