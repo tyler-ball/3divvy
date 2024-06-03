@@ -91,9 +91,9 @@ export function EditJob() {
                     <td><label>Amount Offered</label></td>
                     <td><input
                         type="number"
-                        name="amt_offered"
+                        name="amountOffered"
                         step="0.01"
-                        value={job['amt_offered']}
+                        value={job['amountOffered']}
                         onChange={handleChange}
                     /></td>
                 </tr>
