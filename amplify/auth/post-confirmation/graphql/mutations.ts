@@ -21,8 +21,11 @@ export const createContract = /* GraphQL */ `mutation CreateContract(
       colors
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -30,7 +33,6 @@ export const createContract = /* GraphQL */ `mutation CreateContract(
       __typename
     }
     jobID
-    paid
     status
     updatedAt
     __typename
@@ -52,15 +54,17 @@ export const createJob = /* GraphQL */ `mutation CreateJob(
       createdAt
       id
       jobID
-      paid
       status
       updatedAt
       __typename
     }
     createdAt
     description
+    hasContract
+    hasPaid
     id
     modelFilePath
+    modelSize
     requiredMaterials
     submitter
     title
@@ -103,8 +107,11 @@ export const deleteContract = /* GraphQL */ `mutation DeleteContract(
       colors
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -112,7 +119,6 @@ export const deleteContract = /* GraphQL */ `mutation DeleteContract(
       __typename
     }
     jobID
-    paid
     status
     updatedAt
     __typename
@@ -134,15 +140,17 @@ export const deleteJob = /* GraphQL */ `mutation DeleteJob(
       createdAt
       id
       jobID
-      paid
       status
       updatedAt
       __typename
     }
     createdAt
     description
+    hasContract
+    hasPaid
     id
     modelFilePath
+    modelSize
     requiredMaterials
     submitter
     title
@@ -185,8 +193,11 @@ export const updateContract = /* GraphQL */ `mutation UpdateContract(
       colors
       createdAt
       description
+      hasContract
+      hasPaid
       id
       modelFilePath
+      modelSize
       requiredMaterials
       submitter
       title
@@ -194,7 +205,6 @@ export const updateContract = /* GraphQL */ `mutation UpdateContract(
       __typename
     }
     jobID
-    paid
     status
     updatedAt
     __typename
@@ -216,15 +226,17 @@ export const updateJob = /* GraphQL */ `mutation UpdateJob(
       createdAt
       id
       jobID
-      paid
       status
       updatedAt
       __typename
     }
     createdAt
     description
+    hasContract
+    hasPaid
     id
     modelFilePath
+    modelSize
     requiredMaterials
     submitter
     title
