@@ -106,7 +106,7 @@ export default function JobsTable(props) {
         if (init || (hasMorePages && currentPageIndex === pageTokens.length)) {
             const raw_resp = await client.models.Job.list({
                 filter: filters,
-                limit: 10,
+                limit: 30,
                 nextToken: prevToken,
                 authMode: 'userPool',
                 selectionSet: ['id', 
