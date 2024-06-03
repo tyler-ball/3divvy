@@ -31,7 +31,7 @@ export function DeleteJob(props) {
     const [job, setJob] = useState<Job>({
         'title': '',
         'description': '',
-        'amt_offered': 0
+        'amountOffered': 0
     });
 
     const getJob = async () => {

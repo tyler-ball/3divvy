@@ -36,7 +36,7 @@ const VisuallyHiddenInput = styled('input')({
 interface FormData {
     title: string;
     description: string;
-    amt_offered: number;
+    amountOffered: number;
 };
 
 type CreateJobResult = {
@@ -73,7 +73,7 @@ async function CreateJob({ user, formData, modelFile }: { user: AuthUser, formDa
         submitter: user.userId,
         title: formData.title,
         description: formData.description,
-        amountOffered: formData.amt_offered,
+        amountOffered: formData.amountOffered,
         colors: colors,
         requiredMaterials: materials,
         modelSize: modelFile.size
@@ -118,7 +118,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
     const [formData, setFormData] = useState({
         "title": "",
         "description": "",
-        "amt_offered": 0,
+        "amountOffered": 0,
         'materials': {
             'Plastic': false,
             'Resin': false,
@@ -172,7 +172,7 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
         setShowAlertMessage(result.message);
     }
 
-    const isDisabled = !formData.title || !formData.description || formData.amt_offered <= 0 || !modelFile;
+    const isDisabled = !formData.title || !formData.description || formData.amountOffered <= 0 || !modelFile;
 
     return (
         <>
@@ -229,9 +229,9 @@ export default function Popup({ showPopUp, setShowPopUp, setShowAlert, setShowAl
                                 label="Amount"
                                 type="number"
                                 size="small"
-                                name="amt_offered"
+                                name="amountOffered"
                                 fullWidth
-                                value={formData.amt_offered}
+                                value={formData.amountOffered}
                                 onChange={handleChange}
                             />
                         </Grid>
